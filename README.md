@@ -28,3 +28,8 @@ jobs:
         env:
           GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}
 ```
+
+
+## Example projects
+
+- [Javascript] https://github.com/raulanatol/javascript-example-gar
