@@ -9,6 +9,6 @@ fi
 
 echo "Starting..."
 
-gren changelog --override
+gren changelog --generate
 
 cat CHANGELOG.md
