@@ -1,4 +1,4 @@
-# Github Action Releaser
+# Github Actions Releaser
 
 This action use [gren](https://github.com/github-tools/github-release-notes) to generate the release notes
 
@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Generate release notes
-        uses: raulanatol/github-action-releaser@master
+        uses: raulanatol/github-actions-releaser@master
         env:
-          GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}          
+          GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}
 ```
