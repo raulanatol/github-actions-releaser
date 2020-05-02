@@ -1,0 +1,16 @@
+name: Github Actions Releaser
+description: Create a release notes using gren
+author: raulanatol
+branding:
+  color: green
+  icon: upload-cloud
+inputs:
+  GREN_GITHUB_TOKEN:
+    description: The gren github token
+    required: true
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.GREN_GITHUB_TOKEN }}
