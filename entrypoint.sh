@@ -10,5 +10,5 @@ fi
 echo "Starting..."
 
 gren changelog --generate
-
-cat CHANGELOG.md
+CHANGELOG=$(cat CHANGELOG.md)
+echo "::set-output name=changelog_body::$CHANGELOG"
