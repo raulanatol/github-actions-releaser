@@ -5,8 +5,8 @@ branding:
   color: green
   icon: upload-cloud
 inputs:
-  GREN_GITHUB_TOKEN:
-    description: The gren github token
+  GITHUB_TOKEN:
+    description: The github token
     required: true
 runs:
   using: 'node12'
