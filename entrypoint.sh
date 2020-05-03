@@ -2,11 +2,7 @@
 
 set -e
 
-echo $(date)
-git remote -v
-git log
-git branch -a
-TAG_NAME=git describe
+TAG_NAME=$(git describe --abbrev=0 --tags)
 
 if [ -z "$GREN_GITHUB_TOKEN" ]; then
   echo "GREN_GITHUB_TOKEN is not set"
