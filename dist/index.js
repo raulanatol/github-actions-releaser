@@ -2116,34 +2116,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
-// const toTagName = (ref: string): string => ref.replace('refs/tags/', '');
+const toTagName = (ref) => ref.replace('refs/tags/', '');
 exports.createRelease = (github, context, notes) => __awaiter(void 0, void 0, void 0, function* () {
-    core.debug(`Context: ${context}`);
-    core.debug(`Repo: ${context.repo}`);
-    core.debug(`Ref: ${context.ref}`);
-    core.debug(`Notes: ${notes}`);
-    //
-    // const { owner, ref } = repo;
-    //
-    // const tagName = toTagName(ref);
-    //
-    // const newRelease = await github.repos.createRelease({
-    //   owner,
-    //   repo,
-    //   tag_name: tagName,
-    //   name: `Release ${tagName}`,
-    //   body: notes,
-    //   draft: false,
-    //   prerelease: false
-    // });
-    //
-    // const {
-    //   data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl }
-    // } = newRelease;
-    //
-    // core.setOutput('id', releaseId);
-    // core.setOutput('html_url', htmlUrl);
-    // core.setOutput('upload_url', uploadUrl);
+    const { owner, ref, repo } = context;
+    core.debug(`Context: ${JSON.stringify(context)}`);
+    core.debug(`owner: ${owner}`);
+    core.debug(`ref: ${ref}`);
+    core.debug(`repo: ${repo}`);
+    const tagName = toTagName(ref);
+    const newRelease = yield github.repos.createRelease({
+        owner,
+        repo,
+        tag_name: tagName,
+        name: `Release ${tagName}`,
+        body: notes,
+        draft: false,
+        prerelease: false
+    });
+    const { data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl } } = newRelease;
+    core.setOutput('id', releaseId);
+    core.setOutput('html_url', htmlUrl);
+    core.setOutput('upload_url', uploadUrl);
 });
 
 
