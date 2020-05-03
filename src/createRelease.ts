@@ -1,10 +1,14 @@
 import * as core from '@actions/core';
 import { GitHub } from '@actions/github';
+import { Context } from '@actions/github/lib/context';
 
 const toTagName = (ref: string): string => ref.replace('refs/tags/', '');
 
-export const createRelease = async (github: GitHub, context: any, notes: string) => {
-  const { owner, ref, repo } = context;
+export const createRelease = async (github: GitHub, context: Context, notes: string) => {
+  const {
+    ref,
+    repo: { repo, owner }
+  } = context;
 
   core.debug(`Context: ${JSON.stringify(context)}`);
   core.debug(`owner: ${owner}`);

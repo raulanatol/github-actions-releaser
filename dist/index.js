@@ -2118,7 +2118,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const toTagName = (ref) => ref.replace('refs/tags/', '');
 exports.createRelease = (github, context, notes) => __awaiter(void 0, void 0, void 0, function* () {
-    const { owner, ref, repo } = context;
+    const { ref, repo: { repo, owner } } = context;
     core.debug(`Context: ${JSON.stringify(context)}`);
     core.debug(`owner: ${owner}`);
     core.debug(`ref: ${ref}`);
