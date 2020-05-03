@@ -2,7 +2,7 @@
   "name": "github-actions-releaser",
   "version": "1.0.0",
   "description": "This action use [gren](https://github.com/github-tools/github-release-notes) to generate the release notes",
-  "main": "lib/index.js",
+  "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write **/*.ts",
