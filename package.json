@@ -1,0 +1,47 @@
+{
+  "name": "github-actions-releaser",
+  "version": "1.0.0",
+  "description": "This action use [gren](https://github.com/github-tools/github-release-notes) to generate the release notes",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint 'src/**.js' 'tests/**.js' --fix",
+    "test": "eslint 'src/**.js' 'tests/**.js' && jest --coverage",
+    "build": "ncc build src/index.js",
+    "precommit": "npm run build && git add dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raulanatol/github-actions-releaser.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "release",
+    "publish"
+  ],
+  "author": "raulanatol",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/raulanatol/github-actions-releaser/issues"
+  },
+  "homepage": "https://github.com/raulanatol/github-actions-releaser#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^2.1.1"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.20.4",
+    "eslint": "^5.13.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.6.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^2.7.0",
+    "jest": "^24.8.0",
+    "prettier": "^1.16.4",
+    "husky": "^3.0.5"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
