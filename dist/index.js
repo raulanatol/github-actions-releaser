@@ -2043,7 +2043,7 @@ function run() {
         try {
             const { repo, owner, github } = initialize(github_1.context.repo);
             const notes = yield releaseNotes_1.releaseNotes(github, repo, owner);
-            yield createRelease_1.createRelease(github, github_1.context.repo, notes);
+            yield createRelease_1.createRelease(github, github_1.context, notes);
             core.debug(`Notes: ${notes}`);
         }
         catch (error) {
@@ -2116,23 +2116,34 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
-const toTagName = (ref) => ref.replace('refs/tags/', '');
-exports.createRelease = (github, repo, notes) => __awaiter(void 0, void 0, void 0, function* () {
-    const { owner, ref } = repo;
-    const tagName = toTagName(ref);
-    const newRelease = yield github.repos.createRelease({
-        owner,
-        repo,
-        tag_name: tagName,
-        name: `Release ${tagName}`,
-        body: notes,
-        draft: false,
-        prerelease: false
-    });
-    const { data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl } } = newRelease;
-    core.setOutput('id', releaseId);
-    core.setOutput('html_url', htmlUrl);
-    core.setOutput('upload_url', uploadUrl);
+// const toTagName = (ref: string): string => ref.replace('refs/tags/', '');
+exports.createRelease = (github, context, notes) => __awaiter(void 0, void 0, void 0, function* () {
+    core.debug(`Context: ${context}`);
+    core.debug(`Repo: ${context.repo}`);
+    core.debug(`Ref: ${context.ref}`);
+    core.debug(`Notes: ${notes}`);
+    //
+    // const { owner, ref } = repo;
+    //
+    // const tagName = toTagName(ref);
+    //
+    // const newRelease = await github.repos.createRelease({
+    //   owner,
+    //   repo,
+    //   tag_name: tagName,
+    //   name: `Release ${tagName}`,
+    //   body: notes,
+    //   draft: false,
+    //   prerelease: false
+    // });
+    //
+    // const {
+    //   data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl }
+    // } = newRelease;
+    //
+    // core.setOutput('id', releaseId);
+    // core.setOutput('html_url', htmlUrl);
+    // core.setOutput('upload_url', uploadUrl);
 });
 
 

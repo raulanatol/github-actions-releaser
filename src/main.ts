@@ -17,7 +17,7 @@ async function run(): Promise<void> {
   try {
     const { repo, owner, github } = initialize(context.repo);
     const notes = await releaseNotes(github, repo, owner);
-    await createRelease(github, context.repo, notes);
+    await createRelease(github, context, notes);
 
     core.debug(`Notes: ${notes}`);
   } catch (error) {
