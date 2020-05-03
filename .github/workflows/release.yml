@@ -1,0 +1,15 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Github Actions Releaser
+        id: actions_releaser
+        uses: raulanatol/github-actions-releaser@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
