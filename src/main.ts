@@ -1,19 +1,28 @@
-import * as core from '@actions/core'
-import {wait} from './wait'
+import * as core from '@actions/core';
+import { releaseNotes } from './releaseNotes';
+import { context, GitHub } from '@actions/github';
+
+const getGithubClient = () => {
+  const githubToken = process.env.GITHUB_TOKEN;
+  if (!githubToken) {
+    throw new Error('Invalid GITHUB_TOKEN');
+  }
+  return new GitHub(githubToken);
+};
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const github = getGithubClient();
+    const notes = releaseNotes(github, context);
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    core.debug(`Notes: ${notes}`);
+    const ms: string = core.getInput('milliseconds');
+    core.debug(`Waiting ${ms} milliseconds ...`);
 
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('time', new Date().toTimeString());
   } catch (error) {
-    core.setFailed(error.message)
+    core.setFailed(error.message);
   }
 }
 
-run()
+run();
