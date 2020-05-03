@@ -14,10 +14,6 @@ fi
 VERSION_PARAM=$1
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-function cleanup() {
-  npm run clean
-}
-
 function verify_uncommitted_changes() {
   if [[ $(git status --porcelain) ]]; then
     error "There are uncommitted changes in the working tree."
@@ -40,7 +36,6 @@ function git_push() {
   git push -u origin master && git push --tags
 }
 
-cleanup
 verify_uncommitted_changes
 verify_master_branch
 new_version
