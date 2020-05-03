@@ -26,13 +26,18 @@ const getIssueType = (labels: string[] = []): IssueType => {
   return IssueType.OTHER;
 };
 
-const getClosedIssues = async (github: GitHub, previousReleaseDate: string, repo: string, owner: string): Promise<IssueToRelease[]> => {
-  const githubClosedIssues = await github.issues.listForRepo({
+const getClosedIssues = async (github: GitHub, previousReleaseDate: string | undefined, repo: string, owner: string): Promise<IssueToRelease[]> => {
+  const request: any = {
     owner,
     repo,
-    state: 'closed',
-    since: previousReleaseDate
-  });
+    state: 'closed'
+  };
+
+  if (previousReleaseDate) {
+    request.since = previousReleaseDate;
+  }
+
+  const githubClosedIssues = await github.issues.listForRepo(request);
 
   return githubClosedIssues.data.map(issue => {
     const labels = extractLabels(issue.labels);
@@ -47,15 +52,13 @@ const getClosedIssues = async (github: GitHub, previousReleaseDate: string, repo
   });
 };
 
-const getLatestReleaseDate = async (github: GitHub, repo: string, owner: string): Promise<string> => {
-  const lastRelease = await github.repos.getLatestRelease({ owner, repo });
-  const response = {
-    createdAt: lastRelease.data.created_at,
-    publishedAt: lastRelease.data.published_at,
-    name: lastRelease.data.name,
-    tagName: lastRelease.data.tag_name
-  };
-  return response.publishedAt;
+export const getLatestReleaseDate = async (github: GitHub, repo: string, owner: string): Promise<string | undefined> => {
+  try {
+    const lastRelease = await github.repos.getLatestRelease({ owner, repo });
+    return lastRelease.data.published_at;
+  } catch (e) {
+    return undefined;
+  }
 };
 
 export const toReleaseNotesIssues = (closedIssues: IssueToRelease[] = []): ReleaseNotesIssuesText => {

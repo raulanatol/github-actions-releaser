@@ -1,4 +1,4 @@
-import { issuesToReleaseNotes, toReleaseNotesIssues, toReleaseNoteText } from '../src/releaseNotes';
+import { getLatestReleaseDate, issuesToReleaseNotes, toReleaseNotesIssues, toReleaseNoteText } from '../src/releaseNotes';
 import { IssueToRelease, IssueType } from '../src/models';
 
 describe('ReleaseNotes', () => {
@@ -71,6 +71,18 @@ describe('ReleaseNotes', () => {
     test('should generate an empty release notes when no closed issues is provided', () => {
       const issues: IssueToRelease[] = [];
       expect(issuesToReleaseNotes(issues)).toMatchSnapshot();
+    });
+  });
+
+  describe('getLatestReleaseDate', () => {
+    test('should return undefined when the repository does not have any release yet', async () => {
+      const github = {
+        repos: {
+          getLatestRelease: () => Promise.reject('Not found')
+        }
+      } as any;
+      const result = await getLatestReleaseDate(github, 'fakeRepo', 'fakeOwner');
+      expect(result).toBeUndefined();
     });
   });
 });

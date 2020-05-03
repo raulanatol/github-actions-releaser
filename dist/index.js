@@ -4540,12 +4540,15 @@ const getIssueType = (labels = []) => {
     return models_1.IssueType.OTHER;
 };
 const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
-    const githubClosedIssues = yield github.issues.listForRepo({
+    const request = {
         owner,
         repo,
-        state: 'closed',
-        since: previousReleaseDate
-    });
+        state: 'closed'
+    };
+    if (previousReleaseDate) {
+        request.since = previousReleaseDate;
+    }
+    const githubClosedIssues = yield github.issues.listForRepo(request);
     return githubClosedIssues.data.map(issue => {
         const labels = extractLabels(issue.labels);
         return {
@@ -4558,15 +4561,14 @@ const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(
         };
     });
 });
-const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
-    const lastRelease = yield github.repos.getLatestRelease({ owner, repo });
-    const response = {
-        createdAt: lastRelease.data.created_at,
-        publishedAt: lastRelease.data.published_at,
-        name: lastRelease.data.name,
-        tagName: lastRelease.data.tag_name
-    };
-    return response.publishedAt;
+exports.getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const lastRelease = yield github.repos.getLatestRelease({ owner, repo });
+        return lastRelease.data.published_at;
+    }
+    catch (e) {
+        return undefined;
+    }
 });
 exports.toReleaseNotesIssues = (closedIssues = []) => {
     const bugs = [];
@@ -4594,7 +4596,7 @@ exports.issuesToReleaseNotes = (issues) => {
     return exports.toReleaseNoteText(releaseNotesIssuesText);
 };
 exports.releaseNotes = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
-    const previousReleaseDate = yield getLatestReleaseDate(github, repo, owner);
+    const previousReleaseDate = yield exports.getLatestReleaseDate(github, repo, owner);
     const closedIssues = yield getClosedIssues(github, previousReleaseDate, repo, owner);
     return exports.issuesToReleaseNotes(closedIssues);
 });
