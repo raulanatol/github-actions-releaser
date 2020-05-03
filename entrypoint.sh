@@ -9,6 +9,5 @@ fi
 
 echo "Starting..."
 
-gren changelog --generate
-CHANGELOG=$(cat CHANGELOG.md)
-echo "::set-output name=changelog_body::$CHANGELOG"
+gren changelog -l 1 --override
+cat CHANGELOG.md
