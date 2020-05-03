@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release notes 1`] = `
+"# What's changed
+
+🐛 Bug Fixes
+--
+
+- Bug 1 ([#123](https://github.com/issue/issue_1)) @testUser1
+- Bug 2 ([#2845](https://github.com/issue/issue_2)) @testUser2
+- Bug 3 ([#234](https://github.com/issue/issue_4)) @testUser3
+
+🚀 Features
+--
+
+- Feature 1 ([#2145](https://github.com/issue/issue_3)) @testUser23
+- Feature 21 ([#23214](https://github.com/issue/issue_5)) @testUser1
+
+🛠 Others
+--
+
+- Other 1 ([#12](https://github.com/issue/issue_6)) @testUser1
+"
+`;
+
+exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release notes with no bugs 1`] = `
+"# What's changed
+
+🚀 Features
+--
+
+- Feature 1 ([#2145](https://github.com/issue/issue_3)) @testUser23
+- Feature 21 ([#23214](https://github.com/issue/issue_5)) @testUser1
+
+🛠 Others
+--
+
+- Other 1 ([#12](https://github.com/issue/issue_6)) @testUser1
+"
+`;
+
+exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release notes with no features 1`] = `
+"# What's changed
+
+🐛 Bug Fixes
+--
+
+- Bug 1 ([#123](https://github.com/issue/issue_1)) @testUser1
+- Bug 2 ([#2845](https://github.com/issue/issue_2)) @testUser2
+- Bug 3 ([#234](https://github.com/issue/issue_4)) @testUser3
+
+🛠 Others
+--
+
+- Other 1 ([#12](https://github.com/issue/issue_6)) @testUser1
+"
+`;
+
+exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release notes with no others 1`] = `
+"# What's changed
+
+🐛 Bug Fixes
+--
+
+- Bug 1 ([#123](https://github.com/issue/issue_1)) @testUser1
+- Bug 2 ([#2845](https://github.com/issue/issue_2)) @testUser2
+- Bug 3 ([#234](https://github.com/issue/issue_4)) @testUser3
+
+🚀 Features
+--
+
+- Feature 1 ([#2145](https://github.com/issue/issue_3)) @testUser23
+- Feature 21 ([#23214](https://github.com/issue/issue_5)) @testUser1
+"
+`;
+
+exports[`ReleaseNotes issuesToReleaseNotes should generate an empty release notes when no closed issues is provided 1`] = `
+"# What's changed
+"
+`;
+
+exports[`ReleaseNotes toReleaseNoteText should return a valid release notes when an empty list of bugs is provided 1`] = `
+"# What's changed
+"
+`;
+
+exports[`ReleaseNotes toReleaseNotesIssues should return a valid group of issues 1`] = `
+Object {
+  "bugs": "",
+  "features": "",
+  "others": "
+🛠 Others
+--
+
+- Bug 1 ([#123](https://github.com/issue/issue_1)) @testUser1
+- Bug 2 ([#2845](https://github.com/issue/issue_2)) @testUser2
+- Bug 3 ([#234](https://github.com/issue/issue_3)) @testUser3
+",
+}
+`;
