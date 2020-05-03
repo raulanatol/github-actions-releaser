@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { releaseNotes } from './releaseNotes';
 import { context, GitHub } from '@actions/github';
-import { createRelease } from './createRelease';
+// import { createRelease } from './createRelease';
 
 const getGithubClient = () => {
   const githubToken = process.env.GITHUB_TOKEN;
@@ -13,9 +13,13 @@ const getGithubClient = () => {
 
 async function run(): Promise<void> {
   try {
+    const {
+      repo: { repo, owner }
+    } = context;
+
     const github = getGithubClient();
-    const notes = releaseNotes(github, context);
-    createRelease(github, notes);
+    const notes = await releaseNotes(github, repo, owner);
+    // await createRelease(github, context.repo, notes);
 
     core.debug(`Notes: ${notes}`);
     core.setOutput('time', new Date().toTimeString());
