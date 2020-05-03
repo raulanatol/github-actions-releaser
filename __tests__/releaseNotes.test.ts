@@ -4,11 +4,13 @@ import { IssueToRelease, IssueType } from '../src/models';
 describe('ReleaseNotes', () => {
   describe('toReleaseNoteText', () => {
     test('should return a valid release notes when an empty list of bugs is provided', () => {
-      expect(toReleaseNoteText({
-        features: '',
-        bugs: '',
-        others: ''
-      })).toMatchSnapshot();
+      expect(
+        toReleaseNoteText({
+          features: '',
+          bugs: '',
+          others: ''
+        })
+      ).toMatchSnapshot();
     });
   });
 

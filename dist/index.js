@@ -2029,7 +2029,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const releaseNotes_1 = __webpack_require__(360);
 const github_1 = __webpack_require__(469);
-// import { createRelease } from './createRelease';
+const createRelease_1 = __webpack_require__(249);
 const getGithubClient = () => {
     const githubToken = process.env.GITHUB_TOKEN;
     if (!githubToken) {
@@ -2037,13 +2037,13 @@ const getGithubClient = () => {
     }
     return new github_1.GitHub(githubToken);
 };
+const initialize = ({ repo, owner }) => ({ github: getGithubClient(), repo, owner });
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { repo: { repo, owner } } = github_1.context;
-            const github = getGithubClient();
+            const { repo, owner, github } = initialize(github_1.context.repo);
             const notes = yield releaseNotes_1.releaseNotes(github, repo, owner);
-            // await createRelease(github, context.repo, notes);
+            yield createRelease_1.createRelease(github, github_1.context.repo, notes);
             core.debug(`Notes: ${notes}`);
         }
         catch (error) {
@@ -2090,6 +2090,51 @@ exports.getUserAgent = getUserAgent;
 /***/ (function(module) {
 
 module.exports = {"_from":"@octokit/rest@^16.43.1","_id":"@octokit/rest@16.43.1","_inBundle":false,"_integrity":"sha512-gfFKwRT/wFxq5qlNjnW2dh+qh74XgTQ2B179UX5K1HYCluioWj8Ndbgqw2PVqa1NnVJkGHp2ovMpVn/DImlmkw==","_location":"/@octokit/rest","_phantomChildren":{"@octokit/types":"2.12.2","deprecation":"2.3.1","once":"1.4.0"},"_requested":{"type":"range","registry":true,"raw":"@octokit/rest@^16.43.1","name":"@octokit/rest","escapedName":"@octokit%2frest","scope":"@octokit","rawSpec":"^16.43.1","saveSpec":null,"fetchSpec":"^16.43.1"},"_requiredBy":["/@actions/github"],"_resolved":"https://registry.npmjs.org/@octokit/rest/-/rest-16.43.1.tgz","_shasum":"3b11e7d1b1ac2bbeeb23b08a17df0b20947eda6b","_spec":"@octokit/rest@^16.43.1","_where":"/Users/raulanatol/work/github-actions/github-actions-releaser/node_modules/@actions/github","author":{"name":"Gregor Martynus","url":"https://github.com/gr2m"},"bugs":{"url":"https://github.com/octokit/rest.js/issues"},"bundleDependencies":false,"bundlesize":[{"path":"./dist/octokit-rest.min.js.gz","maxSize":"33 kB"}],"contributors":[{"name":"Mike de Boer","email":"info@mikedeboer.nl"},{"name":"Fabian Jakobs","email":"fabian@c9.io"},{"name":"Joe Gallo","email":"joe@brassafrax.com"},{"name":"Gregor Martynus","url":"https://github.com/gr2m"}],"dependencies":{"@octokit/auth-token":"^2.4.0","@octokit/plugin-paginate-rest":"^1.1.1","@octokit/plugin-request-log":"^1.0.0","@octokit/plugin-rest-endpoint-methods":"2.4.0","@octokit/request":"^5.2.0","@octokit/request-error":"^1.0.2","atob-lite":"^2.0.0","before-after-hook":"^2.0.0","btoa-lite":"^1.0.0","deprecation":"^2.0.0","lodash.get":"^4.4.2","lodash.set":"^4.3.2","lodash.uniq":"^4.5.0","octokit-pagination-methods":"^1.1.0","once":"^1.4.0","universal-user-agent":"^4.0.0"},"deprecated":false,"description":"GitHub REST API client for Node.js","devDependencies":{"@gimenete/type-writer":"^0.1.3","@octokit/auth":"^1.1.1","@octokit/fixtures-server":"^5.0.6","@octokit/graphql":"^4.2.0","@types/node":"^13.1.0","bundlesize":"^0.18.0","chai":"^4.1.2","compression-webpack-plugin":"^3.1.0","cypress":"^3.0.0","glob":"^7.1.2","http-proxy-agent":"^4.0.0","lodash.camelcase":"^4.3.0","lodash.merge":"^4.6.1","lodash.upperfirst":"^4.3.1","lolex":"^5.1.2","mkdirp":"^1.0.0","mocha":"^7.0.1","mustache":"^4.0.0","nock":"^11.3.3","npm-run-all":"^4.1.2","nyc":"^15.0.0","prettier":"^1.14.2","proxy":"^1.0.0","semantic-release":"^17.0.0","sinon":"^8.0.0","sinon-chai":"^3.0.0","sort-keys":"^4.0.0","string-to-arraybuffer":"^1.0.0","string-to-jsdoc-comment":"^1.0.0","typescript":"^3.3.1","webpack":"^4.0.0","webpack-bundle-analyzer":"^3.0.0","webpack-cli":"^3.0.0"},"files":["index.js","index.d.ts","lib","plugins"],"homepage":"https://github.com/octokit/rest.js#readme","keywords":["octokit","github","rest","api-client"],"license":"MIT","name":"@octokit/rest","nyc":{"ignore":["test"]},"publishConfig":{"access":"public"},"release":{"publish":["@semantic-release/npm",{"path":"@semantic-release/github","assets":["dist/*","!dist/*.map.gz"]}]},"repository":{"type":"git","url":"git+https://github.com/octokit/rest.js.git"},"scripts":{"build":"npm-run-all build:*","build:browser":"npm-run-all build:browser:*","build:browser:development":"webpack --mode development --entry . --output-library=Octokit --output=./dist/octokit-rest.js --profile --json > dist/bundle-stats.json","build:browser:production":"webpack --mode production --entry . --plugin=compression-webpack-plugin --output-library=Octokit --output-path=./dist --output-filename=octokit-rest.min.js --devtool source-map","build:ts":"npm run -s update-endpoints:typescript","coverage":"nyc report --reporter=html && open coverage/index.html","generate-bundle-report":"webpack-bundle-analyzer dist/bundle-stats.json --mode=static --no-open --report dist/bundle-report.html","lint":"prettier --check '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","lint:fix":"prettier --write '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","postvalidate:ts":"tsc --noEmit --target es6 test/typescript-validate.ts","prebuild:browser":"mkdirp dist/","pretest":"npm run -s lint","prevalidate:ts":"npm run -s build:ts","start-fixtures-server":"octokit-fixtures-server","test":"nyc mocha test/mocha-node-setup.js \"test/*/**/*-test.js\"","test:browser":"cypress run --browser chrome","update-endpoints":"npm-run-all update-endpoints:*","update-endpoints:fetch-json":"node scripts/update-endpoints/fetch-json","update-endpoints:typescript":"node scripts/update-endpoints/typescript","validate:ts":"tsc --target es6 --noImplicitAny index.d.ts"},"types":"index.d.ts","version":"16.43.1"};
+
+/***/ }),
+
+/***/ 249:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = __importStar(__webpack_require__(470));
+const toTagName = (ref) => ref.replace('refs/tags/', '');
+exports.createRelease = (github, repo, notes) => __awaiter(void 0, void 0, void 0, function* () {
+    const { owner, ref } = repo;
+    const tagName = toTagName(ref);
+    const newRelease = yield github.repos.createRelease({
+        owner,
+        repo,
+        tag_name: tagName,
+        name: `Release ${tagName}`,
+        body: notes,
+        draft: false,
+        prerelease: false
+    });
+    const { data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl } } = newRelease;
+    core.setOutput('id', releaseId);
+    core.setOutput('html_url', htmlUrl);
+    core.setOutput('upload_url', uploadUrl);
+});
+
 
 /***/ }),
 
@@ -4474,31 +4519,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const core = __importStar(__webpack_require__(470));
-const toReleaseNote = (issue) => `- ${issue.title}`;
-const toReleaseNoteText = (bugs, features, others) => `
-# NEW CHANGES
-
-🐛 Bug Fixes
---
-${bugs.map(toReleaseNote)}
-
-🚀 Features
---
-${features.map(toReleaseNote)}
-
---
-${others.map(toReleaseNote)}
-`;
+const models_1 = __webpack_require__(409);
+const issueToReleaseNoteText = (issue) => `- ${issue.title} ([#${issue.id}](${issue.url})) @${issue.user}`;
+exports.issuesToText = (issues) => issues.map(issueToReleaseNoteText).join('\n');
+const toOthersText = (issues) => (issues.length ? `\n🛠 Others\n--\n\n${exports.issuesToText(issues)}\n` : '');
+const toBugsText = (issues) => (issues.length ? `\n🐛 Bug Fixes\n--\n\n${exports.issuesToText(issues)}\n` : '');
+const toFeaturesText = (issues) => (issues.length ? `\n🚀 Features\n--\n\n${exports.issuesToText(issues)}\n` : '');
+exports.toReleaseNoteText = ({ bugs, features, others }) => `# What's changed\n${bugs}${features}${others}`;
 const extractLabels = (labels = []) => labels.map(label => label.name);
+const getIssueType = (labels = []) => {
+    for (const label of labels) {
+        if (models_1.BUG_LABELS.includes(label)) {
+            return models_1.IssueType.BUG;
+        }
+        if (models_1.FEATURE_LABELS.includes(label)) {
+            return models_1.IssueType.FEATURE;
+        }
+    }
+    return models_1.IssueType.OTHER;
+};
 const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const githubClosedIssues = yield github.issues.listForRepo({
         owner,
@@ -4506,14 +4546,17 @@ const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(
         state: 'closed',
         since: previousReleaseDate
     });
-    return githubClosedIssues.data.map(issue => ({
-        id: issue.id,
-        title: issue.title,
-        url: issue.html_url,
-        user: issue.user.login,
-        userURL: issue.user.url,
-        labels: extractLabels(issue.labels)
-    }));
+    return githubClosedIssues.data.map(issue => {
+        const labels = extractLabels(issue.labels);
+        return {
+            id: issue.id,
+            title: issue.title,
+            url: issue.html_url,
+            user: issue.user.login,
+            labels,
+            type: getIssueType(labels)
+        };
+    });
 });
 const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const lastRelease = yield github.repos.getLatestRelease({ owner, repo });
@@ -4523,13 +4566,37 @@ const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, 
         name: lastRelease.data.name,
         tagName: lastRelease.data.tag_name
     };
-    core.debug(`LastRelease: ${JSON.stringify(response)}`);
     return response.publishedAt;
 });
+exports.toReleaseNotesIssues = (closedIssues = []) => {
+    const bugs = [];
+    const features = [];
+    const others = [];
+    for (const issue of closedIssues) {
+        if (issue.type === models_1.IssueType.BUG) {
+            bugs.push(issue);
+        }
+        else if (issue.type === models_1.IssueType.FEATURE) {
+            features.push(issue);
+        }
+        else {
+            others.push(issue);
+        }
+    }
+    return {
+        others: toOthersText(others),
+        bugs: toBugsText(bugs),
+        features: toFeaturesText(features)
+    };
+};
+exports.issuesToReleaseNotes = (issues) => {
+    const releaseNotesIssuesText = exports.toReleaseNotesIssues(issues);
+    return exports.toReleaseNoteText(releaseNotesIssuesText);
+};
 exports.releaseNotes = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const previousReleaseDate = yield getLatestReleaseDate(github, repo, owner);
     const closedIssues = yield getClosedIssues(github, previousReleaseDate, repo, owner);
-    return toReleaseNoteText(closedIssues, [], []);
+    return exports.issuesToReleaseNotes(closedIssues);
 });
 
 
@@ -5058,6 +5125,24 @@ function Octokit(plugins, options) {
 
   return api;
 }
+
+
+/***/ }),
+
+/***/ 409:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BUG_LABELS = ['bug', 'Type: Bug'];
+exports.FEATURE_LABELS = ['enhancement', 'Type: Enhancement', 'feature', 'Type: Feature'];
+var IssueType;
+(function (IssueType) {
+    IssueType[IssueType["FEATURE"] = 0] = "FEATURE";
+    IssueType[IssueType["BUG"] = 1] = "BUG";
+    IssueType[IssueType["OTHER"] = 2] = "OTHER";
+})(IssueType = exports.IssueType || (exports.IssueType = {}));
 
 
 /***/ }),
