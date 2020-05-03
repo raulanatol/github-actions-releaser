@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import { releaseNotes } from './releaseNotes';
 import { context, GitHub } from '@actions/github';
+import { createRelease } from './createRelease';
 
 const getGithubClient = () => {
   const githubToken = process.env.GITHUB_TOKEN;
@@ -14,6 +15,7 @@ async function run(): Promise<void> {
   try {
     const github = getGithubClient();
     const notes = releaseNotes(github, context);
+    createRelease(github, notes);
 
     core.debug(`Notes: ${notes}`);
     core.setOutput('time', new Date().toTimeString());
