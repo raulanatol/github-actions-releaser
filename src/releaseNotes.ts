@@ -37,7 +37,7 @@ const getClosedIssues = async (github: GitHub, previousReleaseDate: string, repo
   return githubClosedIssues.data.map(issue => {
     const labels = extractLabels(issue.labels);
     return {
-      id: issue.id,
+      id: issue.number,
       title: issue.title,
       url: issue.html_url,
       user: issue.user.login,

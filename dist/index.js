@@ -2119,10 +2119,6 @@ const core = __importStar(__webpack_require__(470));
 const toTagName = (ref) => ref.replace('refs/tags/', '');
 exports.createRelease = (github, context, notes) => __awaiter(void 0, void 0, void 0, function* () {
     const { ref, repo: { repo, owner } } = context;
-    core.debug(`Context: ${JSON.stringify(context)}`);
-    core.debug(`owner: ${owner}`);
-    core.debug(`ref: ${ref}`);
-    core.debug(`repo: ${repo}`);
     const tagName = toTagName(ref);
     const newRelease = yield github.repos.createRelease({
         owner,
@@ -4553,7 +4549,7 @@ const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(
     return githubClosedIssues.data.map(issue => {
         const labels = extractLabels(issue.labels);
         return {
-            id: issue.id,
+            id: issue.number,
             title: issue.title,
             url: issue.html_url,
             user: issue.user.login,
