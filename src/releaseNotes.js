@@ -1,10 +1,12 @@
+const core = require('@actions/core');
+
 function generateReleaseNotes(github, context) {
 
 
   const { owner, repo } = context.repo;
-  console.log('>>', context);
-  console.log('>>', owner);
-  console.log('>>', repo);
+  core.debug(context);
+  core.debug(owner);
+  core.debug(repo);
 
 
   return '# What\'s changed';
