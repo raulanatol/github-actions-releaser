@@ -2045,7 +2045,6 @@ function run() {
             const notes = yield releaseNotes_1.releaseNotes(github, repo, owner);
             // await createRelease(github, context.repo, notes);
             core.debug(`Notes: ${notes}`);
-            core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {
             core.setFailed(error.message);
@@ -4484,13 +4483,37 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
+const toReleaseNote = (issue) => `- ${issue.title}`;
+const toReleaseNoteText = (bugs, features, others) => `
+# NEW CHANGES
+
+🐛 Bug Fixes
+--
+${bugs.map(toReleaseNote)}
+
+🚀 Features
+--
+${features.map(toReleaseNote)}
+
+--
+${others.map(toReleaseNote)}
+`;
+const extractLabels = (labels = []) => labels.map(label => label.name);
 const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield github.issues.listForRepo({
+    const githubClosedIssues = yield github.issues.listForRepo({
         owner,
         repo,
         state: 'closed',
         since: previousReleaseDate
     });
+    return githubClosedIssues.data.map(issue => ({
+        id: issue.id,
+        title: issue.title,
+        url: issue.html_url,
+        user: issue.user.login,
+        userURL: issue.user.url,
+        labels: extractLabels(issue.labels)
+    }));
 });
 const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const lastRelease = yield github.repos.getLatestRelease({ owner, repo });
@@ -4506,9 +4529,7 @@ const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, 
 exports.releaseNotes = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const previousReleaseDate = yield getLatestReleaseDate(github, repo, owner);
     const closedIssues = yield getClosedIssues(github, previousReleaseDate, repo, owner);
-    core.debug(`Found ${JSON.stringify(closedIssues)} closed issues`);
-    core.debug(`Found ${closedIssues.data.length} closed issues`);
-    return '# NEW CHANGES';
+    return toReleaseNoteText(closedIssues, [], []);
 });
 
 

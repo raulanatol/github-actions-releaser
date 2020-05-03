@@ -22,7 +22,6 @@ async function run(): Promise<void> {
     // await createRelease(github, context.repo, notes);
 
     core.debug(`Notes: ${notes}`);
-    core.setOutput('time', new Date().toTimeString());
   } catch (error) {
     core.setFailed(error.message);
   }
