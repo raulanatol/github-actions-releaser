@@ -1,8 +1,9 @@
 import * as core from '@actions/core';
+import { GitHub } from '@actions/github';
 
 const toTagName = (ref: string): string => ref.replace('refs/tags/', '');
 
-export const createRelease = async (github, repo, notes) => {
+export const createRelease = async (github: GitHub, repo: any, notes: string) => {
   const { owner, ref } = repo;
 
   const tagName = toTagName(ref);

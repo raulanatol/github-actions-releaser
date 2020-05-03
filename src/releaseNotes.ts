@@ -1,37 +1,30 @@
-import * as core from '@actions/core';
 import { GitHub } from '@actions/github';
+import { BUG_LABELS, FEATURE_LABELS, GithubIssueLabel, IssueToRelease, IssueType, ReleaseNotesIssuesText } from './models';
 
-const toReleaseNote = (issue: IssueToRelease) => `- ${issue.title}`;
+const issueToReleaseNoteText = (issue: IssueToRelease) => `- ${issue.title} ([#${issue.id}](${issue.url})) @${issue.user}`;
 
-const toReleaseNoteText = (bugs: IssueToRelease[], features: IssueToRelease[], others: IssueToRelease[]) => `
-# NEW CHANGES
+export const issuesToText = (issues: IssueToRelease[]): string => issues.map(issueToReleaseNoteText).join('\n');
 
-🐛 Bug Fixes
---
-${bugs.map(toReleaseNote)}
+const toOthersText = (issues: IssueToRelease[]) => (issues.length ? `\n🛠 Others\n--\n\n${issuesToText(issues)}\n` : '');
+const toBugsText = (issues: IssueToRelease[]) => (issues.length ? `\n🐛 Bug Fixes\n--\n\n${issuesToText(issues)}\n` : '');
+const toFeaturesText = (issues: IssueToRelease[]) => (issues.length ? `\n🚀 Features\n--\n\n${issuesToText(issues)}\n` : '');
 
-🚀 Features
---
-${features.map(toReleaseNote)}
-
---
-${others.map(toReleaseNote)}
-`;
-
-interface GithubIssueLabel {
-  name: string;
-}
-
-interface IssueToRelease {
-  id: number;
-  title: string;
-  url: string;
-  user: string;
-  userURL: string;
-  labels: string[];
-}
+export const toReleaseNoteText = ({ bugs, features, others }: ReleaseNotesIssuesText) => `# What's changed\n${bugs}${features}${others}`;
 
 const extractLabels = (labels: GithubIssueLabel[] = []): string[] => labels.map(label => label.name);
+
+const getIssueType = (labels: string[] = []): IssueType => {
+  for (const label of labels) {
+    if (BUG_LABELS.includes(label)) {
+      return IssueType.BUG;
+    }
+
+    if (FEATURE_LABELS.includes(label)) {
+      return IssueType.FEATURE;
+    }
+  }
+  return IssueType.OTHER;
+};
 
 const getClosedIssues = async (github: GitHub, previousReleaseDate: string, repo: string, owner: string): Promise<IssueToRelease[]> => {
   const githubClosedIssues = await github.issues.listForRepo({
@@ -41,14 +34,17 @@ const getClosedIssues = async (github: GitHub, previousReleaseDate: string, repo
     since: previousReleaseDate
   });
 
-  return githubClosedIssues.data.map(issue => ({
-    id: issue.id,
-    title: issue.title,
-    url: issue.html_url,
-    user: issue.user.login,
-    userURL: issue.user.url,
-    labels: extractLabels(issue.labels)
-  }));
+  return githubClosedIssues.data.map(issue => {
+    const labels = extractLabels(issue.labels);
+    return {
+      id: issue.id,
+      title: issue.title,
+      url: issue.html_url,
+      user: issue.user.login,
+      labels,
+      type: getIssueType(labels)
+    };
+  });
 };
 
 const getLatestReleaseDate = async (github: GitHub, repo: string, owner: string): Promise<string> => {
@@ -59,12 +55,38 @@ const getLatestReleaseDate = async (github: GitHub, repo: string, owner: string)
     name: lastRelease.data.name,
     tagName: lastRelease.data.tag_name
   };
-  core.debug(`LastRelease: ${JSON.stringify(response)}`);
   return response.publishedAt;
 };
 
-export const releaseNotes = async (github: GitHub, repo: string, owner: string) => {
+export const toReleaseNotesIssues = (closedIssues: IssueToRelease[] = []): ReleaseNotesIssuesText => {
+  const bugs: IssueToRelease[] = [];
+  const features: IssueToRelease[] = [];
+  const others: IssueToRelease[] = [];
+
+  for (const issue of closedIssues) {
+    if (issue.type === IssueType.BUG) {
+      bugs.push(issue);
+    } else if (issue.type === IssueType.FEATURE) {
+      features.push(issue);
+    } else {
+      others.push(issue);
+    }
+  }
+
+  return {
+    others: toOthersText(others),
+    bugs: toBugsText(bugs),
+    features: toFeaturesText(features)
+  };
+};
+
+export const issuesToReleaseNotes = (issues: IssueToRelease[]): string => {
+  const releaseNotesIssuesText: ReleaseNotesIssuesText = toReleaseNotesIssues(issues);
+  return toReleaseNoteText(releaseNotesIssuesText);
+};
+
+export const releaseNotes = async (github: GitHub, repo: string, owner: string): Promise<string> => {
   const previousReleaseDate = await getLatestReleaseDate(github, repo, owner);
   const closedIssues = await getClosedIssues(github, previousReleaseDate, repo, owner);
-  return toReleaseNoteText(closedIssues, [], []);
+  return issuesToReleaseNotes(closedIssues);
 };
