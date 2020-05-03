@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y git \
 
 RUN npm install github-release-notes -g
 
+ADD . .
+
 ADD entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
