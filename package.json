@@ -1,7 +1,7 @@
 {
   "name": "github-actions-releaser",
   "version": "1.0.0",
-  "description": "This action use [gren](https://github.com/github-tools/github-release-notes) to generate the release notes",
+  "description": "This action generate a release notes from closed issues",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -10,7 +10,8 @@
     "lint": "eslint src/**/*.ts",
     "pack": "ncc build",
     "test": "jest",
-    "all": "npm run build && npm run format && npm run lint && npm run pack && npm test"
+    "all": "npm run build && npm run format && npm run lint && npm run pack && npm test",
+    "precommit": "npm run all"
   },
   "repository": {
     "type": "git",
@@ -47,7 +48,8 @@
     "js-yaml": "^3.13.1",
     "prettier": "^1.19.1",
     "ts-jest": "^24.2.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.6.4",
+    "husky": "^3.0.5"
   },
   "jest": {
     "testEnvironment": "node"
