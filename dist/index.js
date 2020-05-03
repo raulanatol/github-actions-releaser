@@ -2042,8 +2042,6 @@ function run() {
             const github = getGithubClient();
             const notes = releaseNotes_1.releaseNotes(github, github_1.context);
             core.debug(`Notes: ${notes}`);
-            const ms = core.getInput('milliseconds');
-            core.debug(`Waiting ${ms} milliseconds ...`);
             core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {

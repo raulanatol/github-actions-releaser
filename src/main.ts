@@ -16,9 +16,6 @@ async function run(): Promise<void> {
     const notes = releaseNotes(github, context);
 
     core.debug(`Notes: ${notes}`);
-    const ms: string = core.getInput('milliseconds');
-    core.debug(`Waiting ${ms} milliseconds ...`);
-
     core.setOutput('time', new Date().toTimeString());
   } catch (error) {
     core.setFailed(error.message);
