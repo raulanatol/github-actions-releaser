@@ -1,12 +1,12 @@
 # Github Actions Releaser
 
-This action use [gren](https://github.com/github-tools/github-release-notes) to generate the release notes
+This action to generate a new release notes based on the closed issues after the current.
 
 ## Inputs
 
 | Key | Description | Required | Type |
 | --- | ----------- | -------- | ---- |
-| `GREN_GITHUB_TOKEN` | The GREN github Token | **TRUE** | **SECRET** |
+| `GITHUB_TOKEN` | The github Token | **TRUE** | **SECRET** |
 
 ## Example usage
 
@@ -26,7 +26,7 @@ jobs:
       - name: Generate release notes
         uses: raulanatol/github-actions-releaser@master
         env:
-          GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 

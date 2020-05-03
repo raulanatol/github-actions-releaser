@@ -1,5 +1,5 @@
 name: Github Actions Releaser
-description: Create a release notes using gren
+description: Create a release notes based on last closed issues
 author: raulanatol
 branding:
   color: green
