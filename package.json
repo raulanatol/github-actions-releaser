@@ -30,7 +30,9 @@
   "homepage": "https://github.com/raulanatol/github-actions-releaser#readme",
   "dependencies": {
     "@actions/core": "^1.2.4",
-    "@actions/github": "^2.1.1"
+    "@actions/github": "^2.1.1",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.11.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
