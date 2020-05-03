@@ -4484,17 +4484,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
-// _getClosedIssues
-// YYYY-MM-DDTHH:MM:SSZ
-// const getClosedIssues = async (github: GitHub, previousReleaseDate: string, context: Context) => {
-//   const { repo, owner } = context.repo;
-//   return await github.issues.listForRepo({
-//     owner,
-//     repo,
-//     state: 'closed',
-//     since: previousReleaseDate
-//   });
-// };
+const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield github.issues.listForRepo({
+        owner,
+        repo,
+        state: 'closed',
+        since: previousReleaseDate
+    });
+});
 const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const lastRelease = yield github.repos.getLatestRelease({ owner, repo });
     const response = {
@@ -4503,15 +4500,14 @@ const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, 
         name: lastRelease.data.name,
         tagName: lastRelease.data.tag_name
     };
-    core.debug(`LastRelease: ${response}`);
-    return response.createdAt;
+    core.debug(`LastRelease: ${JSON.stringify(response)}`);
+    return response.publishedAt;
 });
 exports.releaseNotes = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const previousReleaseDate = yield getLatestReleaseDate(github, repo, owner);
-    // const closedIssues = getClosedIssues(github, previousReleaseDate, context);
-    core.debug(`>> Here: ${previousReleaseDate}`);
-    // core.debug(`Owner: ${repo.owner} - Repo: ${JSON.stringify(repo)}`);
-    // core.debug(`Context: ${JSON.stringify(context)}`);
+    const closedIssues = yield getClosedIssues(github, previousReleaseDate, repo, owner);
+    core.debug(`Found ${JSON.stringify(closedIssues)} closed issues`);
+    core.debug(`Found ${closedIssues.data.length} closed issues`);
     return '# NEW CHANGES';
 });
 
