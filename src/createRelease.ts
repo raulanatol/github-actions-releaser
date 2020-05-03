@@ -10,11 +10,6 @@ export const createRelease = async (github: GitHub, context: Context, notes: str
     repo: { repo, owner }
   } = context;
 
-  core.debug(`Context: ${JSON.stringify(context)}`);
-  core.debug(`owner: ${owner}`);
-  core.debug(`ref: ${ref}`);
-  core.debug(`repo: ${repo}`);
-
   const tagName = toTagName(ref);
 
   const newRelease = await github.repos.createRelease({
