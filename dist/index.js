@@ -1876,8 +1876,18 @@ module.exports = opts => {
 /***/ 183:
 /***/ (function(module) {
 
-function generateReleaseNotes() {
+function generateReleaseNotes(github, context) {
+
+
+  const { owner, repo } = context.repo;
+  console.log('>>', context);
+  console.log('>>', owner);
+  console.log('>>', repo);
+
+
   return '# What\'s changed';
+
+
 }
 
 module.exports = generateReleaseNotes;
@@ -8608,7 +8618,9 @@ const { GitHub, context } = __webpack_require__(469);
 const generateReleaseNotes = __webpack_require__(183);
 
 async function run() {
-  const releaseNotes = generateReleaseNotes();
+  const github = new GitHub(process.env.GITHUB_TOKEN);
+
+  const releaseNotes = generateReleaseNotes(github, context);
 
   console.log('>>', releaseNotes);
 }
