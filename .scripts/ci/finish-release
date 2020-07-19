@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -eu
+
+source "$RAUTILS_PATH/src/shell/cout"
+source "$RAUTILS_PATH/src/shell/assert"
+source "$RAUTILS_PATH/src/development/semversion"
+source "$RAUTILS_PATH/src/git/git"
+
+assert::total_arguments $# 1 "Please specify the version increase: minor | major | patch"
+assert::git::not::has_changes
+assert::git::on_master
+
+function change_version() {
+  npm version "$1"
+}
+
+function test() {
+  npm run test
+}
+
+function lint() {
+  npm run lint
+}
+
+function build() {
+  npm run all
+}
+
+function git_push() {
+  git push -u origin master && git push --tags
+}
+
+change_version "$1"
+test
+lint
+build
+git_push
