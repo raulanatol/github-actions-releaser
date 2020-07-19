@@ -591,7 +591,7 @@ exports.createRelease = void 0;
 const core = __importStar(__webpack_require__(470));
 const toTagName = (ref) => ref.replace('refs/tags/', '');
 exports.createRelease = (github, context, notes) => __awaiter(void 0, void 0, void 0, function* () {
-    const { ref, repo: { repo, owner } } = context;
+    const { ref, repo: { repo, owner }, } = context;
     const tagName = toTagName(ref);
     const newRelease = yield github.repos.createRelease({
         owner,
@@ -600,9 +600,9 @@ exports.createRelease = (github, context, notes) => __awaiter(void 0, void 0, vo
         name: `Release ${tagName}`,
         body: notes,
         draft: false,
-        prerelease: false
+        prerelease: false,
     });
-    const { data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl } } = newRelease;
+    const { data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl }, } = newRelease;
     core.setOutput('id', releaseId);
     core.setOutput('html_url', htmlUrl);
     core.setOutput('upload_url', uploadUrl);
@@ -871,7 +871,7 @@ const toOthersText = (issues) => (issues.length ? `\n🛠 Others\n--\n\n${export
 const toBugsText = (issues) => (issues.length ? `\n🐛 Bug Fixes\n--\n\n${exports.issuesToText(issues)}\n` : '');
 const toFeaturesText = (issues) => (issues.length ? `\n🚀 Features\n--\n\n${exports.issuesToText(issues)}\n` : '');
 exports.toReleaseNoteText = ({ bugs, features, others }) => `# What's changed\n${bugs}${features}${others}`;
-const extractLabels = (labels = []) => labels.map(label => label.name);
+const extractLabels = (labels = []) => labels.map((label) => label.name);
 const getIssueType = (labels = []) => {
     for (const label of labels) {
         if (models_1.BUG_LABELS.includes(label)) {
@@ -887,13 +887,13 @@ const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(
     const request = {
         owner,
         repo,
-        state: 'closed'
+        state: 'closed',
     };
     if (previousReleaseDate) {
         request.since = previousReleaseDate;
     }
     const githubClosedIssues = yield github.issues.listForRepo(request);
-    return githubClosedIssues.data.map(issue => {
+    return githubClosedIssues.data.map((issue) => {
         const labels = extractLabels(issue.labels);
         return {
             id: issue.number,
@@ -901,7 +901,7 @@ const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(
             url: issue.html_url,
             user: issue.user.login,
             labels,
-            type: getIssueType(labels)
+            type: getIssueType(labels),
         };
     });
 });
@@ -932,7 +932,7 @@ exports.toReleaseNotesIssues = (closedIssues = []) => {
     return {
         others: toOthersText(others),
         bugs: toBugsText(bugs),
-        features: toFeaturesText(features)
+        features: toFeaturesText(features),
     };
 };
 exports.issuesToReleaseNotes = (issues) => {
