@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import { releaseNotes } from './releaseNotes';
-import { context, GitHub } from '@actions/github';
+import { context, getOctokit } from '@actions/github';
 import { createRelease } from './createRelease';
 
 const getGithubClient = () => {
@@ -8,7 +8,7 @@ const getGithubClient = () => {
   if (!githubToken) {
     throw new Error('Invalid GITHUB_TOKEN');
   }
-  return new GitHub(githubToken);
+  return getOctokit(githubToken);
 };
 
 const initialize = ({ repo, owner }) => ({ github: getGithubClient(), repo, owner });

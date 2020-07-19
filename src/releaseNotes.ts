@@ -1,4 +1,3 @@
-import { GitHub } from '@actions/github';
 import { BUG_LABELS, FEATURE_LABELS, GithubIssueLabel, IssueToRelease, IssueType, ReleaseNotesIssuesText } from './models';
 
 const issueToReleaseNoteText = (issue: IssueToRelease) => `- ${issue.title} ([#${issue.id}](${issue.url})) @${issue.user}`;
@@ -6,12 +5,14 @@ const issueToReleaseNoteText = (issue: IssueToRelease) => `- ${issue.title} ([#$
 export const issuesToText = (issues: IssueToRelease[]): string => issues.map(issueToReleaseNoteText).join('\n');
 
 const toOthersText = (issues: IssueToRelease[]) => (issues.length ? `\n🛠 Others\n--\n\n${issuesToText(issues)}\n` : '');
+
 const toBugsText = (issues: IssueToRelease[]) => (issues.length ? `\n🐛 Bug Fixes\n--\n\n${issuesToText(issues)}\n` : '');
+
 const toFeaturesText = (issues: IssueToRelease[]) => (issues.length ? `\n🚀 Features\n--\n\n${issuesToText(issues)}\n` : '');
 
 export const toReleaseNoteText = ({ bugs, features, others }: ReleaseNotesIssuesText) => `# What's changed\n${bugs}${features}${others}`;
 
-const extractLabels = (labels: GithubIssueLabel[] = []): string[] => labels.map(label => label.name);
+const extractLabels = (labels: GithubIssueLabel[] = []): string[] => labels.map((label) => label.name);
 
 const getIssueType = (labels: string[] = []): IssueType => {
   for (const label of labels) {
@@ -26,11 +27,11 @@ const getIssueType = (labels: string[] = []): IssueType => {
   return IssueType.OTHER;
 };
 
-const getClosedIssues = async (github: GitHub, previousReleaseDate: string | undefined, repo: string, owner: string): Promise<IssueToRelease[]> => {
+const getClosedIssues = async (github, previousReleaseDate: string | undefined, repo: string, owner: string): Promise<IssueToRelease[]> => {
   const request: any = {
     owner,
     repo,
-    state: 'closed'
+    state: 'closed',
   };
 
   if (previousReleaseDate) {
@@ -39,7 +40,7 @@ const getClosedIssues = async (github: GitHub, previousReleaseDate: string | und
 
   const githubClosedIssues = await github.issues.listForRepo(request);
 
-  return githubClosedIssues.data.map(issue => {
+  return githubClosedIssues.data.map((issue) => {
     const labels = extractLabels(issue.labels);
     return {
       id: issue.number,
@@ -47,12 +48,12 @@ const getClosedIssues = async (github: GitHub, previousReleaseDate: string | und
       url: issue.html_url,
       user: issue.user.login,
       labels,
-      type: getIssueType(labels)
+      type: getIssueType(labels),
     };
   });
 };
 
-export const getLatestReleaseDate = async (github: GitHub, repo: string, owner: string): Promise<string | undefined> => {
+export const getLatestReleaseDate = async (github, repo: string, owner: string): Promise<string | undefined> => {
   try {
     const lastRelease = await github.repos.getLatestRelease({ owner, repo });
     return lastRelease.data.published_at;
@@ -79,7 +80,7 @@ export const toReleaseNotesIssues = (closedIssues: IssueToRelease[] = []): Relea
   return {
     others: toOthersText(others),
     bugs: toBugsText(bugs),
-    features: toFeaturesText(features)
+    features: toFeaturesText(features),
   };
 };
 
@@ -88,7 +89,7 @@ export const issuesToReleaseNotes = (issues: IssueToRelease[]): string => {
   return toReleaseNoteText(releaseNotesIssuesText);
 };
 
-export const releaseNotes = async (github: GitHub, repo: string, owner: string): Promise<string> => {
+export const releaseNotes = async (github, repo: string, owner: string): Promise<string> => {
   const previousReleaseDate = await getLatestReleaseDate(github, repo, owner);
   const closedIssues = await getClosedIssues(github, previousReleaseDate, repo, owner);
   return issuesToReleaseNotes(closedIssues);

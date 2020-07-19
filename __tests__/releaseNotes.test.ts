@@ -8,7 +8,7 @@ describe('ReleaseNotes', () => {
         toReleaseNoteText({
           features: '',
           bugs: '',
-          others: ''
+          others: '',
         })
       ).toMatchSnapshot();
     });
@@ -19,7 +19,7 @@ describe('ReleaseNotes', () => {
       const issues: IssueToRelease[] = [
         { id: 123, title: 'Bug 1', user: 'testUser1', url: 'https://github.com/issue/issue_1' },
         { id: 2845, title: 'Bug 2', user: 'testUser2', url: 'https://github.com/issue/issue_2' },
-        { id: 234, title: 'Bug 3', user: 'testUser3', url: 'https://github.com/issue/issue_3' }
+        { id: 234, title: 'Bug 3', user: 'testUser3', url: 'https://github.com/issue/issue_3' },
       ] as IssueToRelease[];
       expect(toReleaseNotesIssues(issues)).toMatchSnapshot();
     });
@@ -33,7 +33,7 @@ describe('ReleaseNotes', () => {
         { id: 2145, title: 'Feature 1', user: 'testUser23', url: 'https://github.com/issue/issue_3', type: IssueType.FEATURE },
         { id: 234, title: 'Bug 3', user: 'testUser3', url: 'https://github.com/issue/issue_4', type: IssueType.BUG },
         { id: 23214, title: 'Feature 21', user: 'testUser1', url: 'https://github.com/issue/issue_5', type: IssueType.FEATURE },
-        { id: 12, title: 'Other 1', user: 'testUser1', url: 'https://github.com/issue/issue_6', type: IssueType.OTHER }
+        { id: 12, title: 'Other 1', user: 'testUser1', url: 'https://github.com/issue/issue_6', type: IssueType.OTHER },
       ] as IssueToRelease[];
       expect(issuesToReleaseNotes(issues)).toMatchSnapshot();
     });
@@ -44,7 +44,7 @@ describe('ReleaseNotes', () => {
         { id: 2845, title: 'Bug 2', user: 'testUser2', url: 'https://github.com/issue/issue_2', type: IssueType.BUG },
         { id: 2145, title: 'Feature 1', user: 'testUser23', url: 'https://github.com/issue/issue_3', type: IssueType.FEATURE },
         { id: 234, title: 'Bug 3', user: 'testUser3', url: 'https://github.com/issue/issue_4', type: IssueType.BUG },
-        { id: 23214, title: 'Feature 21', user: 'testUser1', url: 'https://github.com/issue/issue_5', type: IssueType.FEATURE }
+        { id: 23214, title: 'Feature 21', user: 'testUser1', url: 'https://github.com/issue/issue_5', type: IssueType.FEATURE },
       ] as IssueToRelease[];
       expect(issuesToReleaseNotes(issues)).toMatchSnapshot();
     });
@@ -54,7 +54,7 @@ describe('ReleaseNotes', () => {
         { id: 123, title: 'Bug 1', user: 'testUser1', url: 'https://github.com/issue/issue_1', type: IssueType.BUG },
         { id: 2845, title: 'Bug 2', user: 'testUser2', url: 'https://github.com/issue/issue_2', type: IssueType.BUG },
         { id: 234, title: 'Bug 3', user: 'testUser3', url: 'https://github.com/issue/issue_4', type: IssueType.BUG },
-        { id: 12, title: 'Other 1', user: 'testUser1', url: 'https://github.com/issue/issue_6', type: IssueType.OTHER }
+        { id: 12, title: 'Other 1', user: 'testUser1', url: 'https://github.com/issue/issue_6', type: IssueType.OTHER },
       ] as IssueToRelease[];
       expect(issuesToReleaseNotes(issues)).toMatchSnapshot();
     });
@@ -63,7 +63,7 @@ describe('ReleaseNotes', () => {
       const issues: IssueToRelease[] = [
         { id: 2145, title: 'Feature 1', user: 'testUser23', url: 'https://github.com/issue/issue_3', type: IssueType.FEATURE },
         { id: 23214, title: 'Feature 21', user: 'testUser1', url: 'https://github.com/issue/issue_5', type: IssueType.FEATURE },
-        { id: 12, title: 'Other 1', user: 'testUser1', url: 'https://github.com/issue/issue_6', type: IssueType.OTHER }
+        { id: 12, title: 'Other 1', user: 'testUser1', url: 'https://github.com/issue/issue_6', type: IssueType.OTHER },
       ] as IssueToRelease[];
       expect(issuesToReleaseNotes(issues)).toMatchSnapshot();
     });
@@ -78,8 +78,8 @@ describe('ReleaseNotes', () => {
     test('should return undefined when the repository does not have any release yet', async () => {
       const github = {
         repos: {
-          getLatestRelease: () => Promise.reject('Not found')
-        }
+          getLatestRelease: () => Promise.reject('Not found'),
+        },
       } as any;
       const result = await getLatestReleaseDate(github, 'fakeRepo', 'fakeOwner');
       expect(result).toBeUndefined();

@@ -1,13 +1,12 @@
 import * as core from '@actions/core';
-import { GitHub } from '@actions/github';
 import { Context } from '@actions/github/lib/context';
 
 const toTagName = (ref: string): string => ref.replace('refs/tags/', '');
 
-export const createRelease = async (github: GitHub, context: Context, notes: string) => {
+export const createRelease = async (github, context: Context, notes: string) => {
   const {
     ref,
-    repo: { repo, owner }
+    repo: { repo, owner },
   } = context;
 
   const tagName = toTagName(ref);
@@ -19,11 +18,11 @@ export const createRelease = async (github: GitHub, context: Context, notes: str
     name: `Release ${tagName}`,
     body: notes,
     draft: false,
-    prerelease: false
+    prerelease: false,
   });
 
   const {
-    data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl }
+    data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl },
   } = newRelease;
 
   core.setOutput('id', releaseId);

@@ -4,7 +4,7 @@ export const FEATURE_LABELS: string[] = ['enhancement', 'Type: Enhancement', 'fe
 export enum IssueType {
   FEATURE,
   BUG,
-  OTHER
+  OTHER,
 }
 
 export interface IssueToRelease {
