@@ -38,7 +38,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createRelease = void 0;
 const core = __importStar(__nccwpck_require__(186));
-const toTagName = (ref) => ref.replace('refs/tags/', '');
+const core_1 = __nccwpck_require__(186);
+const toTagName = (ref) => {
+    const customTagName = core_1.getInput('TAG_NAME');
+    if (customTagName) {
+        return customTagName;
+    }
+    return ref.replace('refs/tags/', '');
+};
 const createRelease = (github, context, notes) => __awaiter(void 0, void 0, void 0, function* () {
     const { ref, repo: { repo, owner } } = context;
     const tagName = toTagName(ref);
