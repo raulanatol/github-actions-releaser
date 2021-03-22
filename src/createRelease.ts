@@ -4,9 +4,12 @@ import { Context } from '@actions/github/lib/context';
 
 const toTagName = (ref: string): string => {
   const customTagName = getInput('TAG_NAME');
+  console.log('createRelease.ts l.7 customTagName', customTagName);
   if (customTagName) {
+    console.log('createRelease.ts l.9 customTagName', customTagName);
     return customTagName;
   }
+  console.log('createRelease.ts l.13');
   return ref.replace('refs/tags/', '');
 };
 
@@ -17,6 +20,7 @@ export const createRelease = async (github, context: Context, notes: string) => 
   } = context;
 
   const tagName = toTagName(ref);
+  console.log('createRelease.ts l.23');
 
   const newRelease = await github.repos.createRelease({
     owner,
