@@ -8,6 +8,9 @@ inputs:
   GITHUB_TOKEN:
     description: The github token
     required: true
+  TAG_NAME:
+    description: The new tag name. Do not use it if you want to auto tagging
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'

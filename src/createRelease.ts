@@ -1,7 +1,14 @@
 import * as core from '@actions/core';
+import { getInput } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
 
-const toTagName = (ref: string): string => ref.replace('refs/tags/', '');
+const toTagName = (ref: string): string => {
+  const customTagName = getInput('TAG_NAME');
+  if (customTagName) {
+    return customTagName;
+  }
+  return ref.replace('refs/tags/', '');
+};
 
 export const createRelease = async (github, context: Context, notes: string) => {
   const {
