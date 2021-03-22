@@ -1,16 +1,31 @@
-# Github Actions Releaser
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-This action to generate a new release notes based on the closed issues after the current.
+- [Github Actions Releaser](#github-actions-releaser)
+- [Inputs](#inputs)
+- [Example usage](#example-usage)
+- [Example projects](#example-projects)
 
-## Inputs
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+<div align="center">
+    <h1>Github Actions Releaser</h1>
+</div>
+
+<p>This action to generate a new release notes based on the closed issues after the current.</p>
+
+---
+
+# Inputs
 
 | Key | Description | Required | Type |
 | --- | ----------- | -------- | ---- |
 | `GITHUB_TOKEN` | The github Token | **TRUE** | **SECRET** |
 
-## Example usage
+# Example usage
 
-Create the file `workflow.yml` in `.github/workflows` folder. 
+Create the file `workflow.yml` in `.github/workflows` folder.
 
 ```
 name: Release
@@ -29,7 +44,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-
-## Example projects
+# Example projects
 
 - [Javascript] https://github.com/raulanatol/javascript-example-gar

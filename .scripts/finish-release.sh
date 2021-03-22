@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -eu
 
@@ -7,12 +7,22 @@ function error() {
   exit 1
 }
 
-if [ $# != 1 ]; then
-  error "Please specify npm version parameter (major, minor, patch)"
+if [[ $# != 1 ]]; then
+  error "Please specify the version to release patch/minor/major"
 fi
 
 VERSION_PARAM=$1
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+function change_version() {
+  npm version "${VERSION_PARAM}"
+}
+
+function verify_main_branch() {
+  if [[ ${BRANCH} != 'main' ]]; then
+    error "Invalid branch name ${BRANCH}"
+  fi
+}
 
 function verify_uncommitted_changes() {
   if [[ $(git status --porcelain) ]]; then
@@ -20,25 +30,14 @@ function verify_uncommitted_changes() {
   fi
 }
 
-function verify_master_branch() {
-  if [ "${BRANCH}" == 'master' ]; then
-    echo "Master branch"
-  else
-    error "Invalid branch name ${BRANCH}"
-  fi
-}
-
-function new_version() {
-  npm version "${VERSION_PARAM}"
-}
-
-function git_push() {
-  git push -u origin master && git push --tags
+function publish() {
+  npm publish --access public
+  git push && git push --follow-tags
 }
 
 verify_uncommitted_changes
-verify_master_branch
-new_version
-git_push
-
-echo 'Finish release'
+verify_main_branch
+change_version
+make
+publish
+echo "📦✅"

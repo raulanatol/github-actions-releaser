@@ -31,7 +31,7 @@ const getClosedIssues = async (github, previousReleaseDate: string | undefined, 
   const request: any = {
     owner,
     repo,
-    state: 'closed',
+    state: 'closed'
   };
 
   if (previousReleaseDate) {
@@ -48,7 +48,7 @@ const getClosedIssues = async (github, previousReleaseDate: string | undefined, 
       url: issue.html_url,
       user: issue.user.login,
       labels,
-      type: getIssueType(labels),
+      type: getIssueType(labels)
     };
   });
 };
@@ -80,7 +80,7 @@ export const toReleaseNotesIssues = (closedIssues: IssueToRelease[] = []): Relea
   return {
     others: toOthersText(others),
     bugs: toBugsText(bugs),
-    features: toFeaturesText(features),
+    features: toFeaturesText(features)
   };
 };
 
