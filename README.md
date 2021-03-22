@@ -10,9 +10,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Github Actions Releaser](#github-actions-releaser)
 - [Inputs](#inputs)
 - [Example usage](#example-usage)
+  - [With custom tag name](#with-custom-tag-name)
 - [Example projects](#example-projects)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
