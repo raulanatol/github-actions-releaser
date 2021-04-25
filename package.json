@@ -1,6 +1,6 @@
 {
   "name": "github-actions-releaser",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "This action generate a release notes from closed issues",
   "keywords": [
     "actions",
