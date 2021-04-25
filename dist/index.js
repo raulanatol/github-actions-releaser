@@ -272,7 +272,6 @@ const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, 
     }
 });
 exports.getLatestReleaseDate = getLatestReleaseDate;
-// TODO: Refactor
 const toReleaseNotesIssues = (closedIssues = []) => {
     const bugs = [];
     const features = [];
