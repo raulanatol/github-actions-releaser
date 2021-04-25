@@ -16,6 +16,11 @@ exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release not
 - Feature 1 ([#2145](https://github.com/issue/issue_3)) @testUser23
 - Feature 21 ([#23214](https://github.com/issue/issue_5)) @testUser1
 
+💄 Enhancements
+--
+
+- test: 1 ([#1020](https://github.com/issue/issue_19)) @testUser3
+
 🛠 Others
 --
 
@@ -87,6 +92,7 @@ exports[`ReleaseNotes toReleaseNoteText should return a valid release notes when
 exports[`ReleaseNotes toReleaseNotesIssues should return a valid group of issues 1`] = `
 Object {
   "bugs": "",
+  "enhancements": "",
   "features": "",
   "others": "
 🛠 Others

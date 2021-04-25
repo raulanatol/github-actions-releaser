@@ -1,5 +1,4 @@
-require('./sourcemap-register.js');module.exports =
-/******/ (() => { // webpackBootstrap
+require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 869:
@@ -68,6 +67,70 @@ exports.createRelease = createRelease;
 
 /***/ }),
 
+/***/ 238:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.classifyIssue = void 0;
+const models_1 = __nccwpck_require__(209);
+const classifyIssue = (issue) => {
+    const typeFromLabels = getIssueTypeFromLabels(issue);
+    if (typeFromLabels) {
+        return typeFromLabels;
+    }
+    const typeFromTitle = getIssueTypeFromTitle(issue);
+    if (typeFromTitle) {
+        return typeFromTitle;
+    }
+    return 'other';
+};
+exports.classifyIssue = classifyIssue;
+const extractLabels = (labels) => labels.map(({ name }) => name.toLowerCase());
+const getIssueTypeFromLabels = (issue) => {
+    const labels = extractLabels(issue.labels || []);
+    for (const label of labels) {
+        if (models_1.BUG_LABELS.includes(label)) {
+            return 'bug';
+        }
+        if (models_1.FEATURE_LABELS.includes(label)) {
+            return 'feature';
+        }
+    }
+};
+const getIssueTypeFromTitle = (issue) => {
+    const issueTitle = issue.title.toLowerCase();
+    for (const title of models_1.BUG_TITLE_STARTS) {
+        if (issueTitle.startsWith(title)) {
+            return 'bug';
+        }
+    }
+    for (const title of models_1.FEATURE_TITLE_STARTS) {
+        if (issueTitle.startsWith(title)) {
+            return 'feature';
+        }
+    }
+    for (const title of models_1.TEST_TITLE_STARTS) {
+        if (issueTitle.startsWith(title)) {
+            return 'test';
+        }
+    }
+    for (const title of models_1.TOOLS_TITLE_STARTS) {
+        if (issueTitle.startsWith(title)) {
+            return 'tools';
+        }
+    }
+    for (const title of models_1.DOCS_TITLE_STARTS) {
+        if (issueTitle.startsWith(title)) {
+            return 'docs';
+        }
+    }
+};
+
+
+/***/ }),
+
 /***/ 109:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -117,8 +180,9 @@ const initialize = ({ repo, owner }) => ({ github: getGithubClient(), repo, owne
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { repo, owner, github } = initialize(github_1.context.repo);
-            const notes = yield releaseNotes_1.releaseNotes(github, repo, owner);
+            const init = initialize(github_1.context.repo);
+            const github = init.github;
+            const notes = yield releaseNotes_1.releaseNotes(github, init.repo, init.owner);
             yield createRelease_1.createRelease(github, github_1.context, notes);
             core.debug(`Notes: ${notes}`);
         }
@@ -138,15 +202,14 @@ run();
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.IssueType = exports.FEATURE_LABELS = exports.BUG_LABELS = void 0;
-exports.BUG_LABELS = ['bug', 'Type: Bug'];
-exports.FEATURE_LABELS = ['enhancement', 'Type: Enhancement', 'feature', 'Type: Feature'];
-var IssueType;
-(function (IssueType) {
-    IssueType[IssueType["FEATURE"] = 0] = "FEATURE";
-    IssueType[IssueType["BUG"] = 1] = "BUG";
-    IssueType[IssueType["OTHER"] = 2] = "OTHER";
-})(IssueType = exports.IssueType || (exports.IssueType = {}));
+exports.DOCS_TITLE_STARTS = exports.TOOLS_TITLE_STARTS = exports.TEST_TITLE_STARTS = exports.BUG_TITLE_STARTS = exports.FEATURE_TITLE_STARTS = exports.FEATURE_LABELS = exports.BUG_LABELS = void 0;
+exports.BUG_LABELS = ['bug', 'type: bug'];
+exports.FEATURE_LABELS = ['enhancement', 'type: enhancement', 'feature', 'type: feature'];
+exports.FEATURE_TITLE_STARTS = ['feat:', 'feat(', 'feat '];
+exports.BUG_TITLE_STARTS = ['fix:', 'fix(', 'fix '];
+exports.TEST_TITLE_STARTS = ['test:', 'test(', 'test '];
+exports.TOOLS_TITLE_STARTS = ['chore:', 'chore(', 'chore '];
+exports.DOCS_TITLE_STARTS = ['docs:', 'docs(', 'docs '];
 
 
 /***/ }),
@@ -167,27 +230,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.releaseNotes = exports.issuesToReleaseNotes = exports.toReleaseNotesIssues = exports.getLatestReleaseDate = exports.toReleaseNoteText = exports.issuesToText = void 0;
-const models_1 = __nccwpck_require__(209);
+const issueTypeClassifier_1 = __nccwpck_require__(238);
+const withUser = issue => issue.user;
 const issueToReleaseNoteText = (issue) => `- ${issue.title} ([#${issue.id}](${issue.url})) @${issue.user}`;
 const issuesToText = (issues) => issues.map(issueToReleaseNoteText).join('\n');
 exports.issuesToText = issuesToText;
 const toOthersText = (issues) => (issues.length ? `\n🛠 Others\n--\n\n${exports.issuesToText(issues)}\n` : '');
 const toBugsText = (issues) => (issues.length ? `\n🐛 Bug Fixes\n--\n\n${exports.issuesToText(issues)}\n` : '');
 const toFeaturesText = (issues) => (issues.length ? `\n🚀 Features\n--\n\n${exports.issuesToText(issues)}\n` : '');
-const toReleaseNoteText = ({ bugs, features, others }) => `# What's changed\n${bugs}${features}${others}`;
+const toEnhancementsText = (issues) => (issues.length ? `\n💄 Enhancements\n--\n\n${exports.issuesToText(issues)}\n` : '');
+const toReleaseNoteText = ({ bugs, features, enhancements, others }) => `# What's changed\n${bugs}${features}${enhancements}${others}`;
 exports.toReleaseNoteText = toReleaseNoteText;
-const extractLabels = (labels = []) => labels.map((label) => label.name);
-const getIssueType = (labels = []) => {
-    for (const label of labels) {
-        if (models_1.BUG_LABELS.includes(label)) {
-            return models_1.IssueType.BUG;
-        }
-        if (models_1.FEATURE_LABELS.includes(label)) {
-            return models_1.IssueType.FEATURE;
-        }
-    }
-    return models_1.IssueType.OTHER;
-};
+const toIssueToRelease = (issue) => ({
+    id: issue.number,
+    title: issue.title,
+    url: issue.html_url,
+    user: issue.user.login,
+    type: issueTypeClassifier_1.classifyIssue(issue)
+});
 const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const request = {
         owner,
@@ -198,17 +258,9 @@ const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(
         request.since = previousReleaseDate;
     }
     const githubClosedIssues = yield github.issues.listForRepo(request);
-    return githubClosedIssues.data.map((issue) => {
-        const labels = extractLabels(issue.labels);
-        return {
-            id: issue.number,
-            title: issue.title,
-            url: issue.html_url,
-            user: issue.user.login,
-            labels,
-            type: getIssueType(labels)
-        };
-    });
+    return githubClosedIssues.data
+        .filter(withUser)
+        .map(toIssueToRelease);
 });
 const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -216,29 +268,36 @@ const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, 
         return lastRelease.data.published_at;
     }
     catch (e) {
-        return undefined;
+        return null;
     }
 });
 exports.getLatestReleaseDate = getLatestReleaseDate;
+// TODO: Refactor
 const toReleaseNotesIssues = (closedIssues = []) => {
     const bugs = [];
     const features = [];
     const others = [];
+    const enhancements = [];
     for (const issue of closedIssues) {
-        if (issue.type === models_1.IssueType.BUG) {
-            bugs.push(issue);
-        }
-        else if (issue.type === models_1.IssueType.FEATURE) {
-            features.push(issue);
-        }
-        else {
-            others.push(issue);
+        switch (issue.type) {
+            case 'feature':
+                features.push(issue);
+                break;
+            case 'bug':
+                bugs.push(issue);
+                break;
+            case 'test':
+                enhancements.push(issue);
+                break;
+            default:
+                others.push(issue);
         }
     }
     return {
         others: toOthersText(others),
         bugs: toBugsText(bugs),
-        features: toFeaturesText(features)
+        features: toFeaturesText(features),
+        enhancements: toEnhancementsText(enhancements)
     };
 };
 exports.toReleaseNotesIssues = toReleaseNotesIssues;
@@ -453,6 +512,7 @@ exports.getInput = getInput;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setOutput(name, value) {
+    process.stdout.write(os.EOL);
     command_1.issueCommand('set-output', { name }, value);
 }
 exports.setOutput = setOutput;
@@ -6203,8 +6263,9 @@ module.exports = require("zlib");;
 /******/ 	// The require function
 /******/ 	function __nccwpck_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
@@ -6229,11 +6290,14 @@ module.exports = require("zlib");;
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
-/******/ 	__nccwpck_require__.ab = __dirname + "/";/************************************************************************/
-/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";/************************************************************************/
+/******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __nccwpck_require__(109);
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(109);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
