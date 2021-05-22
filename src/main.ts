@@ -2,14 +2,14 @@ import * as core from '@actions/core';
 import { releaseNotes } from './releaseNotes';
 import { context, getOctokit } from '@actions/github';
 import { createRelease } from './createRelease';
-import { GitHub } from '@actions/github/lib/utils';
+import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
 
-const getGithubClient = () => {
+const getGithubClient = (): RestEndpointMethods => {
   const githubToken = process.env.GITHUB_TOKEN;
   if (!githubToken) {
     throw new Error('Invalid GITHUB_TOKEN');
   }
-  return getOctokit(githubToken);
+  return getOctokit(githubToken).rest;
 };
 
 const initialize = ({ repo, owner }) =>
@@ -18,7 +18,7 @@ const initialize = ({ repo, owner }) =>
 async function run(): Promise<void> {
   try {
     const init = initialize(context.repo);
-    const github: InstanceType<typeof GitHub> = init.github;
+    const github: RestEndpointMethods = init.github;
     const notes = await releaseNotes(github, init.repo, init.owner);
     await createRelease(github, context, notes);
 
@@ -28,4 +28,4 @@ async function run(): Promise<void> {
   }
 }
 
-run();
+run().catch(console.error);
