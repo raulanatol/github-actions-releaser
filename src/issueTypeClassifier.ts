@@ -1,6 +1,6 @@
-import { BUG_LABELS, BUG_TITLE_STARTS, DOCS_TITLE_STARTS, FEATURE_LABELS, FEATURE_TITLE_STARTS, GitHubIssue, GitHubIssueLabel, IssueType, TEST_TITLE_STARTS, TOOLS_TITLE_STARTS } from './models';
+import { BUG_LABELS, BUG_TITLE_STARTS, DOCS_TITLE_STARTS, FEATURE_LABELS, FEATURE_TITLE_STARTS, GitHubIssue, GitHubIssueLabel, GitHubPullRequest, IssueType, TEST_TITLE_STARTS, TOOLS_TITLE_STARTS } from './models';
 
-export const classifyIssue = (issue: GitHubIssue): IssueType => {
+export const classifyIssue = (issue: GitHubIssue | GitHubPullRequest): IssueType => {
   const typeFromLabels = getIssueTypeFromLabels(issue);
   if (typeFromLabels) {
     return typeFromLabels;
@@ -15,10 +15,10 @@ export const classifyIssue = (issue: GitHubIssue): IssueType => {
 };
 
 const extractLabels = (labels: GitHubIssueLabel[]): string[] =>
-  labels.map(({ name }) =>
+  labels.map(({ name = '' }) =>
     name.toLowerCase());
 
-const getIssueTypeFromLabels = (issue: GitHubIssue): IssueType | undefined => {
+const getIssueTypeFromLabels = (issue: GitHubIssue | GitHubPullRequest): IssueType | undefined => {
   const labels = extractLabels(issue.labels || []);
 
   for (const label of labels) {
@@ -32,7 +32,7 @@ const getIssueTypeFromLabels = (issue: GitHubIssue): IssueType | undefined => {
   }
 };
 
-const getIssueTypeFromTitle = (issue: GitHubIssue): IssueType | undefined => {
+const getIssueTypeFromTitle = (issue: GitHubIssue | GitHubPullRequest): IssueType | undefined => {
   const issueTitle = issue.title.toLowerCase();
 
   for (const title of BUG_TITLE_STARTS) {

@@ -43,8 +43,8 @@ export interface ReleaseNotesIssuesText {
 }
 
 export interface GitHubIssueLabel {
-  name: string;
-  description: string | null;
+  name?: string;
+  description?: string | null;
 
   [key: string]: any;
 }
@@ -83,4 +83,13 @@ export interface GitHubIssue {
   // author_association: any;
 
   [key: string]: any;
+}
+
+export interface GitHubPullRequest {
+  id: number;
+  html_url: string;
+  title: string;
+  number: number;
+  user: GitHubUser | null;
+  labels: GitHubIssueLabel[] | null;
 }

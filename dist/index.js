@@ -87,7 +87,7 @@ const classifyIssue = (issue) => {
     return 'other';
 };
 exports.classifyIssue = classifyIssue;
-const extractLabels = (labels) => labels.map(({ name }) => name.toLowerCase());
+const extractLabels = (labels) => labels.map(({ name = '' }) => name.toLowerCase());
 const getIssueTypeFromLabels = (issue) => {
     const labels = extractLabels(issue.labels || []);
     for (const label of labels) {
@@ -232,6 +232,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.releaseNotes = exports.issuesToReleaseNotes = exports.toReleaseNotesIssues = exports.getLatestReleaseDate = exports.toReleaseNoteText = exports.issuesToText = void 0;
 const issueTypeClassifier_1 = __nccwpck_require__(4238);
 const withUser = issue => issue.user;
+const isMerged = pullRequest => Boolean(pullRequest.merged_at);
 const issueToReleaseNoteText = (issue) => `- ${issue.title} ([#${issue.id}](${issue.url})) @${issue.user}`;
 const issuesToText = (issues) => issues.map(issueToReleaseNoteText).join('\n');
 exports.issuesToText = issuesToText;
@@ -248,6 +249,13 @@ const toIssueToRelease = (issue) => ({
     user: issue.user.login,
     type: (0, issueTypeClassifier_1.classifyIssue)(issue)
 });
+const fromPullRequestToIssueToRelease = (pullRequest) => ({
+    id: pullRequest.number,
+    title: pullRequest.title,
+    url: pullRequest.html_url,
+    user: pullRequest.user.login,
+    type: (0, issueTypeClassifier_1.classifyIssue)(pullRequest)
+});
 const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const request = {
         owner,
@@ -261,6 +269,21 @@ const getClosedIssues = (github, previousReleaseDate, repo, owner) => __awaiter(
     return githubClosedIssues.data
         .filter(withUser)
         .map(toIssueToRelease);
+});
+const getMergedPullRequest = (github, previousReleaseDate, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
+    const request = {
+        owner,
+        repo,
+        state: 'closed'
+    };
+    if (previousReleaseDate) {
+        request.since = previousReleaseDate;
+    }
+    const githubPullRequestClosed = yield github.pulls.list(request);
+    return githubPullRequestClosed.data
+        .filter(withUser)
+        .filter(isMerged)
+        .map(fromPullRequestToIssueToRelease);
 });
 const getLatestReleaseDate = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -308,7 +331,8 @@ exports.issuesToReleaseNotes = issuesToReleaseNotes;
 const releaseNotes = (github, repo, owner) => __awaiter(void 0, void 0, void 0, function* () {
     const previousReleaseDate = yield (0, exports.getLatestReleaseDate)(github, repo, owner);
     const closedIssues = yield getClosedIssues(github, previousReleaseDate, repo, owner);
-    return (0, exports.issuesToReleaseNotes)(closedIssues);
+    const mergedPullRequests = yield getMergedPullRequest(github, previousReleaseDate, repo, owner);
+    return (0, exports.issuesToReleaseNotes)([...closedIssues, ...mergedPullRequests]);
 });
 exports.releaseNotes = releaseNotes;
 
