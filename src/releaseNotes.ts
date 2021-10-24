@@ -1,8 +1,9 @@
-import { GitHubIssue, IssueToRelease, ReleaseNotesIssuesText } from './models';
+import { GitHubIssue, GitHubPullRequest, IssueToRelease, ReleaseNotesIssuesText } from './models';
 import { classifyIssue } from './issueTypeClassifier';
 import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
 
 const withUser = issue => issue.user;
+const isMerged = pullRequest => Boolean(pullRequest.merged_at);
 
 const issueToReleaseNoteText = (issue: IssueToRelease) =>
   `- ${issue.title} ([#${issue.id}](${issue.url})) @${issue.user}`;
@@ -33,6 +34,14 @@ const toIssueToRelease = (issue: GitHubIssue): IssueToRelease => ({
   type: classifyIssue(issue)
 });
 
+const fromPullRequestToIssueToRelease = (pullRequest: GitHubPullRequest): IssueToRelease => ({
+  id: pullRequest.number,
+  title: pullRequest.title,
+  url: pullRequest.html_url,
+  user: pullRequest.user!.login,
+  type: classifyIssue(pullRequest)
+});
+
 const getClosedIssues = async (github: RestEndpointMethods, previousReleaseDate: string | null, repo: string, owner: string): Promise<IssueToRelease[]> => {
   const request: any = {
     owner,
@@ -48,6 +57,24 @@ const getClosedIssues = async (github: RestEndpointMethods, previousReleaseDate:
   return githubClosedIssues.data
     .filter(withUser)
     .map(toIssueToRelease);
+};
+
+const getMergedPullRequest = async (github: RestEndpointMethods, previousReleaseDate: string | null, repo: string, owner: string): Promise<IssueToRelease[]> => {
+  const request: any = {
+    owner,
+    repo,
+    state: 'closed'
+  };
+
+  if (previousReleaseDate) {
+    request.since = previousReleaseDate;
+  }
+
+  const githubPullRequestClosed = await github.pulls.list(request);
+  return githubPullRequestClosed.data
+    .filter(withUser)
+    .filter(isMerged)
+    .map(fromPullRequestToIssueToRelease);
 };
 
 export const getLatestReleaseDate = async (github: RestEndpointMethods, repo: string, owner: string): Promise<string | null> => {
@@ -97,5 +124,6 @@ export const issuesToReleaseNotes = (issues: IssueToRelease[]): string => {
 export const releaseNotes = async (github: RestEndpointMethods, repo: string, owner: string): Promise<string> => {
   const previousReleaseDate = await getLatestReleaseDate(github, repo, owner);
   const closedIssues = await getClosedIssues(github, previousReleaseDate, repo, owner);
-  return issuesToReleaseNotes(closedIssues);
+  const mergedPullRequests = await getMergedPullRequest(github, previousReleaseDate, repo, owner);
+  return issuesToReleaseNotes([...closedIssues, ...mergedPullRequests]);
 };
