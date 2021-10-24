@@ -23,7 +23,7 @@ async function run(): Promise<void> {
     await createRelease(github, context, notes);
 
     core.debug(`Notes: ${notes}`);
-  } catch (error) {
+  } catch (error: any) {
     core.setFailed(error.message);
   }
 }
