@@ -15,8 +15,12 @@ export const classifyIssue = (issue: GitHubIssue | GitHubPullRequest): IssueType
 };
 
 const extractLabels = (labels: GitHubIssueLabel[]): string[] =>
-  labels.map(({ name = '' }) =>
-    name.toLowerCase());
+  labels.map(label => {
+    if (typeof label === 'string') {
+      return label.toLowerCase();
+    }
+    return (label.name || '').toLowerCase();
+  });
 
 const getIssueTypeFromLabels = (issue: GitHubIssue | GitHubPullRequest): IssueType | undefined => {
   const labels = extractLabels(issue.labels || []);

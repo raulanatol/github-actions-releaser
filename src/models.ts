@@ -42,7 +42,7 @@ export interface ReleaseNotesIssuesText {
   enhancements: string;
 }
 
-export interface GitHubIssueLabel {
+export type GitHubIssueLabel = string | {
   name?: string;
   description?: string | null;
 
@@ -69,7 +69,7 @@ export interface GitHubIssue {
   title: string;
   // body?: string;
   user: GitHubUser | null;
-  labels: GitHubIssueLabel[] | null;
+  labels: GitHubIssueLabel[];
   // assignee: any;
   // assignees: any[];
   // milestone: any;

@@ -90,7 +90,7 @@ exports[`ReleaseNotes toReleaseNoteText should return a valid release notes when
 `;
 
 exports[`ReleaseNotes toReleaseNotesIssues should return a valid group of issues 1`] = `
-Object {
+{
   "bugs": "",
   "enhancements": "",
   "features": "",
