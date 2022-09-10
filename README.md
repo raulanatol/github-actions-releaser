@@ -2,20 +2,7 @@
     <h1>Github Actions Releaser</h1>
 </div>
 
-<p>This action to generate a new release notes based on the closed issues after the current.</p>
-
----
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [Inputs](#inputs)
-- [Example usage](#example-usage)
-  - [With custom tag name](#with-custom-tag-name)
-- [Example projects](#example-projects)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<p>This action generates release notes based on the closed issues.</p>
 
 # Inputs
 

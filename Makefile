@@ -28,10 +28,6 @@ clean_all: clean
 	@echo "🧨 Clean all"
 	@rm -Rf node_modules package-lock.json
 
-docs:
-	@npx doctoc README.md
-	@echo "📚 Documentation ready!"
-
 release_patch: release
 
 release_minor: check
