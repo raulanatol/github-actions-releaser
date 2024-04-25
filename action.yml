@@ -15,5 +15,5 @@ inputs:
     description: Set to true to not create a new release (only generate release notes)
     required: false
 runs:
-  using: 'node12'
+  using: 'node20'
   main: 'dist/index.js'
