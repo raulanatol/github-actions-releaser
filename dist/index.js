@@ -41,9 +41,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createRelease = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const core_1 = __nccwpck_require__(2186);
 const toTagName = (ref) => {
-    const customTagName = (0, core_1.getInput)('TAG_NAME');
+    const customTagName = core.getInput('TAG_NAME');
     if (customTagName) {
         return customTagName;
     }
@@ -196,8 +195,11 @@ function run() {
             const init = initialize(github_1.context.repo);
             const github = init.github;
             const notes = yield (0, releaseNotes_1.releaseNotes)(github, init.repo, init.owner);
-            yield (0, createRelease_1.createRelease)(github, github_1.context, notes);
             core.debug(`Notes: ${notes}`);
+            core.setOutput('notes', notes);
+            if (!core.getInput('NO_CREATE_RELEASE')) {
+                yield (0, createRelease_1.createRelease)(github, github_1.context, notes);
+            }
         }
         catch (error) {
             core.setFailed(error.message);
