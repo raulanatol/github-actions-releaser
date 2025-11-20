@@ -1,5 +1,0 @@
-{
-  "extends": [
-    "@cowcoders/eslint-config/ts"
-  ]
-}

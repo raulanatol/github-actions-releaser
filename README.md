@@ -6,10 +6,10 @@
 
 # Inputs
 
-| Key | Description | Required | Type |
-| --- | ----------- | -------- | ---- |
-| `GITHUB_TOKEN` | The github Token | **TRUE** | **SECRET** |
-| `TAG_NAME` | The new tag name. Do not use it if you want to auto tagging | **FALSE** | String |
+| Key            | Description                                                 | Required  | Type       |
+| -------------- | ----------------------------------------------------------- | --------- | ---------- |
+| `GITHUB_TOKEN` | The github Token                                            | **TRUE**  | **SECRET** |
+| `TAG_NAME`     | The new tag name. Do not use it if you want to auto tagging | **FALSE** | String     |
 
 # Example usage
 

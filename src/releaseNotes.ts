@@ -1,9 +1,9 @@
 import { GitHubIssue, GitHubPullRequest, IssueToRelease, ReleaseNotesIssuesText } from './models';
 import { classifyIssue } from './issueTypeClassifier';
-import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
+import type { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
 
-const withUser = issue => issue.user;
-const isMerged = pullRequest => Boolean(pullRequest.merged_at);
+const withUser = (issue) => issue.user;
+const isMerged = (pullRequest) => Boolean(pullRequest.merged_at);
 
 const issueToReleaseNoteText = (issue: IssueToRelease) =>
   `- ${issue.title} ([#${issue.id}](${issue.url})) @${issue.user}`;
@@ -12,26 +12,30 @@ export const issuesToText = (issues: IssueToRelease[]): string =>
   issues.map(issueToReleaseNoteText).join('\n');
 
 const toOthersText = (issues: IssueToRelease[]) =>
-  (issues.length ? `\n🛠 Others\n--\n\n${issuesToText(issues)}\n` : '');
+  issues.length ? `\n🛠 Others\n--\n\n${issuesToText(issues)}\n` : '';
 
 const toBugsText = (issues: IssueToRelease[]) =>
-  (issues.length ? `\n🐛 Bug Fixes\n--\n\n${issuesToText(issues)}\n` : '');
+  issues.length ? `\n🐛 Bug Fixes\n--\n\n${issuesToText(issues)}\n` : '';
 
 const toFeaturesText = (issues: IssueToRelease[]) =>
-  (issues.length ? `\n🚀 Features\n--\n\n${issuesToText(issues)}\n` : '');
+  issues.length ? `\n🚀 Features\n--\n\n${issuesToText(issues)}\n` : '';
 
 const toEnhancementsText = (issues: IssueToRelease[]) =>
-  (issues.length ? `\n💄 Enhancements\n--\n\n${issuesToText(issues)}\n` : '');
+  issues.length ? `\n💄 Enhancements\n--\n\n${issuesToText(issues)}\n` : '';
 
-export const toReleaseNoteText = ({ bugs, features, enhancements, others }: ReleaseNotesIssuesText) =>
-  `# What's changed\n${bugs}${features}${enhancements}${others}`;
+export const toReleaseNoteText = ({
+  bugs,
+  features,
+  enhancements,
+  others,
+}: ReleaseNotesIssuesText) => `# What's changed\n${bugs}${features}${enhancements}${others}`;
 
 const toIssueToRelease = (issue: GitHubIssue): IssueToRelease => ({
   id: issue.number,
   title: issue.title,
   url: issue.html_url,
   user: issue.user!.login,
-  type: classifyIssue(issue)
+  type: classifyIssue(issue),
 });
 
 const fromPullRequestToIssueToRelease = (pullRequest: GitHubPullRequest): IssueToRelease => ({
@@ -39,14 +43,19 @@ const fromPullRequestToIssueToRelease = (pullRequest: GitHubPullRequest): IssueT
   title: pullRequest.title,
   url: pullRequest.html_url,
   user: pullRequest.user!.login,
-  type: classifyIssue(pullRequest)
+  type: classifyIssue(pullRequest),
 });
 
-const getClosedIssues = async (github: RestEndpointMethods, previousReleaseDate: string | null, repo: string, owner: string): Promise<IssueToRelease[]> => {
+const getClosedIssues = async (
+  github: any,
+  previousReleaseDate: string | null,
+  repo: string,
+  owner: string,
+): Promise<IssueToRelease[]> => {
   const request: any = {
     owner,
     repo,
-    state: 'closed'
+    state: 'closed',
   };
 
   if (previousReleaseDate) {
@@ -54,16 +63,19 @@ const getClosedIssues = async (github: RestEndpointMethods, previousReleaseDate:
   }
 
   const githubClosedIssues = await github.issues.listForRepo(request);
-  return githubClosedIssues.data
-    .filter(withUser)
-    .map(toIssueToRelease);
+  return githubClosedIssues.data.filter(withUser).map(toIssueToRelease);
 };
 
-const getMergedPullRequest = async (github: RestEndpointMethods, previousReleaseDate: string | null, repo: string, owner: string): Promise<IssueToRelease[]> => {
+const getMergedPullRequest = async (
+  github: any,
+  previousReleaseDate: string | null,
+  repo: string,
+  owner: string,
+): Promise<IssueToRelease[]> => {
   const request: any = {
     owner,
     repo,
-    state: 'closed'
+    state: 'closed',
   };
 
   if (previousReleaseDate) {
@@ -77,16 +89,23 @@ const getMergedPullRequest = async (github: RestEndpointMethods, previousRelease
     .map(fromPullRequestToIssueToRelease);
 };
 
-export const getLatestReleaseDate = async (github: RestEndpointMethods, repo: string, owner: string): Promise<string | null> => {
+export const getLatestReleaseDate = async (
+  github: any,
+  repo: string,
+  owner: string,
+): Promise<string | null> => {
   try {
     const lastRelease = await github.repos.getLatestRelease({ owner, repo });
     return lastRelease.data.published_at;
-  } catch (e) {
+  } catch (e: unknown) {
+    console.error(e);
     return null;
   }
 };
 
-export const toReleaseNotesIssues = (closedIssues: IssueToRelease[] = []): ReleaseNotesIssuesText => {
+export const toReleaseNotesIssues = (
+  closedIssues: IssueToRelease[] = [],
+): ReleaseNotesIssuesText => {
   const bugs: IssueToRelease[] = [];
   const features: IssueToRelease[] = [];
   const others: IssueToRelease[] = [];
@@ -112,7 +131,7 @@ export const toReleaseNotesIssues = (closedIssues: IssueToRelease[] = []): Relea
     others: toOthersText(others),
     bugs: toBugsText(bugs),
     features: toFeaturesText(features),
-    enhancements: toEnhancementsText(enhancements)
+    enhancements: toEnhancementsText(enhancements),
   };
 };
 
@@ -121,7 +140,11 @@ export const issuesToReleaseNotes = (issues: IssueToRelease[]): string => {
   return toReleaseNoteText(releaseNotesIssuesText);
 };
 
-export const releaseNotes = async (github: RestEndpointMethods, repo: string, owner: string): Promise<string> => {
+export const releaseNotes = async (
+  github: RestEndpointMethods,
+  repo: string,
+  owner: string,
+): Promise<string> => {
   const previousReleaseDate = await getLatestReleaseDate(github, repo, owner);
   const closedIssues = await getClosedIssues(github, previousReleaseDate, repo, owner);
   const mergedPullRequests = await getMergedPullRequest(github, previousReleaseDate, repo, owner);

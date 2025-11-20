@@ -1,19 +1,17 @@
-name: Github Actions Releaser
-description: Create a release notes based on last closed issues
-author: raulanatol
+name: 'Github Actions Releaser'
+description: 'Create a release notes based on last closed issues'
+author: 'raulanatol'
 branding:
-  color: green
-  icon: upload-cloud
+  color: 'green'
+  icon: 'upload-cloud'
 inputs:
-  GITHUB_TOKEN:
-    description: The github token
-    required: true
   TAG_NAME:
-    description: The new tag name. Do not use it if you want to auto tagging
+    description: 'The new tag name. Do not use it if you want to auto tagging'
     required: false
   NO_CREATE_RELEASE:
-    description: Set to true to not create a new release (only generate release notes)
+    description: 'Set to true to not create a new release (only generate release notes)'
     required: false
+    default: 'false'
 runs:
   using: 'node20'
   main: 'dist/index.js'
