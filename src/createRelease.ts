@@ -1,10 +1,9 @@
 import * as core from '@actions/core';
-import { getInput } from '@actions/core';
 import { Context } from '@actions/github/lib/context';
 import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
 
 const toTagName = (ref: string): string => {
-  const customTagName = getInput('TAG_NAME');
+  const customTagName = core.getInput('TAG_NAME');
   if (customTagName) {
     return customTagName;
   }

@@ -20,9 +20,11 @@ async function run(): Promise<void> {
     const init = initialize(context.repo);
     const github: RestEndpointMethods = init.github;
     const notes = await releaseNotes(github, init.repo, init.owner);
-    await createRelease(github, context, notes);
-
     core.debug(`Notes: ${notes}`);
+    core.setOutput('notes', notes);
+    if (!core.getInput('NO_CREATE_RELEASE')) {
+      await createRelease(github, context, notes);
+    }
   } catch (error: any) {
     core.setFailed(error.message);
   }
