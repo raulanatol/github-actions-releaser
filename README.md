@@ -6,10 +6,11 @@
 
 # Inputs
 
-| Key            | Description                                                 | Required  | Type       |
-| -------------- | ----------------------------------------------------------- | --------- | ---------- |
-| `GITHUB_TOKEN` | The github Token                                            | **TRUE**  | **SECRET** |
-| `TAG_NAME`     | The new tag name. Do not use it if you want to auto tagging | **FALSE** | String     |
+| Key                 | Description                                                 | Required  | Type       |
+|---------------------|-------------------------------------------------------------|-----------|------------|
+| `GITHUB_TOKEN`      | The github Token                                            | **TRUE**  | **SECRET** |
+| `TAG_NAME`          | The new tag name. Do not use it if you want to auto tagging | **FALSE** | String     |
+| `NO_CREATE_RELEASE` | If set to 'true', the action will not create a release      | **FALSE** | String     |
 
 # Example usage
 
@@ -21,13 +22,17 @@ on:
   push:
     tags:
       - 'v*'
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Generate release notes
-        uses: raulanatol/github-actions-releaser@main
+        uses: raulanatol/github-actions-releaser@v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -40,15 +45,20 @@ on:
   push:
     tags:
       - 'v*'
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Generate release notes
-        uses: raulanatol/github-actions-releaser@main
+        uses: raulanatol/github-actions-releaser@v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
           TAG_NAME: vTestName
 ```
 

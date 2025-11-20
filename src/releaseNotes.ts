@@ -98,7 +98,7 @@ export const getLatestReleaseDate = async (
     const lastRelease = await github.repos.getLatestRelease({ owner, repo });
     return lastRelease.data.published_at;
   } catch (e: unknown) {
-    console.error(e);
+    console.debug(e);
     return null;
   }
 };
