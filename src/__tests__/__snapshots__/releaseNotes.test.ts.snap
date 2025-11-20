@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release notes 1`] = `
+exports[`ReleaseNotes > issuesToReleaseNotes > should generate a complex release notes 1`] = `
 "# What's changed
 
 🐛 Bug Fixes
@@ -28,7 +28,7 @@ exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release not
 "
 `;
 
-exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release notes with no bugs 1`] = `
+exports[`ReleaseNotes > issuesToReleaseNotes > should generate a complex release notes with no bugs 1`] = `
 "# What's changed
 
 🚀 Features
@@ -44,7 +44,7 @@ exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release not
 "
 `;
 
-exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release notes with no features 1`] = `
+exports[`ReleaseNotes > issuesToReleaseNotes > should generate a complex release notes with no features 1`] = `
 "# What's changed
 
 🐛 Bug Fixes
@@ -61,7 +61,7 @@ exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release not
 "
 `;
 
-exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release notes with no others 1`] = `
+exports[`ReleaseNotes > issuesToReleaseNotes > should generate a complex release notes with no others 1`] = `
 "# What's changed
 
 🐛 Bug Fixes
@@ -79,17 +79,17 @@ exports[`ReleaseNotes issuesToReleaseNotes should generate a complex release not
 "
 `;
 
-exports[`ReleaseNotes issuesToReleaseNotes should generate an empty release notes when no closed issues is provided 1`] = `
+exports[`ReleaseNotes > issuesToReleaseNotes > should generate an empty release notes when no closed issues is provided 1`] = `
 "# What's changed
 "
 `;
 
-exports[`ReleaseNotes toReleaseNoteText should return a valid release notes when an empty list of bugs is provided 1`] = `
+exports[`ReleaseNotes > toReleaseNoteText > should return a valid release notes when an empty list of bugs is provided 1`] = `
 "# What's changed
 "
 `;
 
-exports[`ReleaseNotes toReleaseNotesIssues should return a valid group of issues 1`] = `
+exports[`ReleaseNotes > toReleaseNotesIssues > should return a valid group of issues 1`] = `
 {
   "bugs": "",
   "enhancements": "",

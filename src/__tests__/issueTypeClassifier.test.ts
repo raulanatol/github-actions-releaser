@@ -1,13 +1,13 @@
-import { classifyIssue } from '../src/issueTypeClassifier';
-import { GitHubIssue, GitHubIssueLabel } from '../src/models';
+import { describe, expect, it } from 'vitest';
+import { classifyIssue } from '../issueTypeClassifier';
+import { GitHubIssue, GitHubIssueLabel } from '../models';
 
 const baseIssue: GitHubIssue = {
   id: 1,
-  title: 'Test'
+  title: 'Test',
 } as GitHubIssue;
 
-const toLabels = (name: string): GitHubIssueLabel[] =>
-  [{ name } as any];
+const toLabels = (name: string): GitHubIssueLabel[] => [{ name } as any];
 
 describe('issueTypeClassifier', () => {
   describe('classifyIssue', () => {

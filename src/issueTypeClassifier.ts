@@ -1,4 +1,16 @@
-import { BUG_LABELS, BUG_TITLE_STARTS, DOCS_TITLE_STARTS, FEATURE_LABELS, FEATURE_TITLE_STARTS, GitHubIssue, GitHubIssueLabel, GitHubPullRequest, IssueType, TEST_TITLE_STARTS, TOOLS_TITLE_STARTS } from './models';
+import {
+  BUG_LABELS,
+  BUG_TITLE_STARTS,
+  DOCS_TITLE_STARTS,
+  FEATURE_LABELS,
+  FEATURE_TITLE_STARTS,
+  GitHubIssue,
+  GitHubIssueLabel,
+  GitHubPullRequest,
+  IssueType,
+  TEST_TITLE_STARTS,
+  TOOLS_TITLE_STARTS,
+} from './models';
 
 export const classifyIssue = (issue: GitHubIssue | GitHubPullRequest): IssueType => {
   const typeFromLabels = getIssueTypeFromLabels(issue);
@@ -15,7 +27,7 @@ export const classifyIssue = (issue: GitHubIssue | GitHubPullRequest): IssueType
 };
 
 const extractLabels = (labels: GitHubIssueLabel[]): string[] =>
-  labels.map(label => {
+  labels.map((label) => {
     if (typeof label === 'string') {
       return label.toLowerCase();
     }

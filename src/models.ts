@@ -1,31 +1,23 @@
-export const BUG_LABELS: string[] =
-  ['bug', 'type: bug'];
+export const BUG_LABELS: string[] = ['bug', 'type: bug'];
 
-export const FEATURE_LABELS: string[] =
-  ['enhancement', 'type: enhancement', 'feature', 'type: feature'];
+export const FEATURE_LABELS: string[] = [
+  'enhancement',
+  'type: enhancement',
+  'feature',
+  'type: feature',
+];
 
-export const FEATURE_TITLE_STARTS: string[] =
-  ['feat:', 'feat(', 'feat '];
+export const FEATURE_TITLE_STARTS: string[] = ['feat:', 'feat(', 'feat '];
 
-export const BUG_TITLE_STARTS: string[] =
-  ['fix:', 'fix(', 'fix '];
+export const BUG_TITLE_STARTS: string[] = ['fix:', 'fix(', 'fix '];
 
-export const TEST_TITLE_STARTS: string[] =
-  ['test:', 'test(', 'test '];
+export const TEST_TITLE_STARTS: string[] = ['test:', 'test(', 'test '];
 
-export const TOOLS_TITLE_STARTS: string[] =
-  ['chore:', 'chore(', 'chore '];
+export const TOOLS_TITLE_STARTS: string[] = ['chore:', 'chore(', 'chore '];
 
-export const DOCS_TITLE_STARTS: string[] =
-  ['docs:', 'docs(', 'docs '];
+export const DOCS_TITLE_STARTS: string[] = ['docs:', 'docs(', 'docs '];
 
-export type IssueType =
-  | 'feature'
-  | 'bug'
-  | 'test'
-  | 'tools'
-  | 'docs'
-  | 'other'
+export type IssueType = 'feature' | 'bug' | 'test' | 'tools' | 'docs' | 'other';
 
 export interface IssueToRelease {
   id: number;
@@ -42,12 +34,14 @@ export interface ReleaseNotesIssuesText {
   enhancements: string;
 }
 
-export type GitHubIssueLabel = string | {
-  name?: string;
-  description?: string | null;
+export type GitHubIssueLabel =
+  | string
+  | {
+      name?: string;
+      description?: string | null;
 
-  [key: string]: any;
-}
+      [key: string]: any;
+    };
 
 export interface GitHubUser {
   login: string;
