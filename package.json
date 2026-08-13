@@ -22,13 +22,11 @@
   "contributors": [
     "tmolitor-stud-tu"
   ],
-  "main": "dist/main.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "tsup src/main.ts --format esm --target=node20 --platform=node --clean --sourcemap --out-dir dist",
+    "build": "tsup",
     "clean": "shx rm -rf dist",
-    "lint": "eslint . --ext .ts",
-    "pack": "ncc build",
-    "package": "ncc build --source-map --license licenses.txt",
+    "lint": "eslint .",
     "test": "vitest run",
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write .",
@@ -36,26 +34,26 @@
     "check": "npm run lint && npm run test"
   },
   "dependencies": {
-    "@actions/core": "1.11.1",
-    "@actions/github": "6.0.1"
+    "@actions/core": "3.0.1",
+    "@actions/github": "9.1.1"
   },
   "devDependencies": {
-    "@types/node": "24.10.1",
-    "@typescript-eslint/eslint-plugin": "8.47.0",
-    "@typescript-eslint/parser": "8.47.0",
-    "@vercel/ncc": "0.38.4",
-    "eslint": "9.39.1",
+    "@types/node": "26.2.0",
+    "eslint": "10.8.1",
     "eslint-config-prettier": "10.1.8",
-    "prettier": "3.6.2",
-    "shx": "^0.4.0",
+    "prettier": "3.9.6",
+    "shx": "0.4.0",
     "tsup": "8.5.1",
-    "typescript": "5.9.3",
-    "typescript-eslint": "8.47.0",
-    "vitest": "4.1.0"
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.67.0",
+    "vitest": "4.1.10"
+  },
+  "overrides": {
+    "rollup": "4.62.4"
   },
   "engines": {
-    "node": "=20.18.0",
-    "npm": "=10.8.2"
+    "node": ">=24",
+    "npm": ">=10"
   },
   "files": [
     "dist"

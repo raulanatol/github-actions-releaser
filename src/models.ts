@@ -1,3 +1,11 @@
+import type { context, getOctokit } from '@actions/github';
+
+// Derived from the values `@actions/github` exports instead of deep-importing its
+// internals: those subpaths are not part of the package `exports` map.
+export type GitHubRestClient = ReturnType<typeof getOctokit>['rest'];
+
+export type GitHubContext = typeof context;
+
 export const BUG_LABELS: string[] = ['bug', 'type: bug'];
 
 export const FEATURE_LABELS: string[] = [

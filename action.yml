@@ -12,6 +12,15 @@ inputs:
     description: 'Set to true to not create a new release (only generate release notes)'
     required: false
     default: 'false'
+outputs:
+  notes:
+    description: 'The generated release notes'
+  id:
+    description: 'The id of the created release. Empty when NO_CREATE_RELEASE is true'
+  html_url:
+    description: 'The URL of the created release. Empty when NO_CREATE_RELEASE is true'
+  upload_url:
+    description: 'The asset upload URL of the created release. Empty when NO_CREATE_RELEASE is true'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'

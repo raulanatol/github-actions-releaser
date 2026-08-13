@@ -15,7 +15,6 @@ test:
 build:
 	@echo "👩‍🏭 Building..."
 	@npm run build
-	@npm run package
 
 check: --pre_check test build
 	@echo "✅"

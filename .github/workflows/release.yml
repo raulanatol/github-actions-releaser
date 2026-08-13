@@ -3,11 +3,15 @@ on:
   push:
     tags:
       - 'v*'
+permissions:
+  contents: write
+  pull-requests: read
+  issues: read
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Github Actions Releaser
         id: actions_releaser
         uses: raulanatol/github-actions-releaser@main

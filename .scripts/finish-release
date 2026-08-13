@@ -26,7 +26,7 @@ function verify_main_branch() {
 
 function verify_uncommitted_changes() {
   if [[ $(git status --porcelain) ]]; then
-    error "There are uncommitted changes in the working tree."
+    error "$1"
   fi
 }
 
@@ -35,9 +35,12 @@ function publish() {
   git push && git push --follow-tags
 }
 
-verify_uncommitted_changes
+verify_uncommitted_changes "There are uncommitted changes in the working tree."
 verify_main_branch
-change_version
+# The bundle in dist/ is what the runner executes, so it has to be committed
+# before tagging: a tag pointing at a stale dist/ ships the previous code.
 make
+verify_uncommitted_changes "The build modified tracked files. Commit dist/ before releasing."
+change_version
 publish
 echo "📦✅"
