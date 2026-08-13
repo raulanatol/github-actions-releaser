@@ -8,7 +8,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - run: |
-          npm install
-          make
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      - run: make
+      - name: Verify dist/ is up to date
+        run: |
+          if [[ -n "$(git status --porcelain dist)" ]]; then
+            echo "::error::dist/ is out of date. Run 'make build' and commit the result."
+            git --no-pager diff --stat dist
+            exit 1
+          fi

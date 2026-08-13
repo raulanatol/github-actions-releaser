@@ -1,6 +1,11 @@
-import { GitHubIssue, GitHubPullRequest, IssueToRelease, ReleaseNotesIssuesText } from './models';
+import {
+  GitHubIssue,
+  GitHubPullRequest,
+  GitHubRestClient,
+  IssueToRelease,
+  ReleaseNotesIssuesText,
+} from './models';
 import { classifyIssue } from './issueTypeClassifier';
-import type { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
 
 const withUser = (issue) => issue.user;
 const isMerged = (pullRequest) => Boolean(pullRequest.merged_at);
@@ -141,7 +146,7 @@ export const issuesToReleaseNotes = (issues: IssueToRelease[]): string => {
 };
 
 export const releaseNotes = async (
-  github: RestEndpointMethods,
+  github: GitHubRestClient,
   repo: string,
   owner: string,
 ): Promise<string> => {

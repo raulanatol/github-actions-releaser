@@ -1,6 +1,5 @@
 import * as core from '@actions/core';
-import { Context } from '@actions/github/lib/context';
-import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
+import type { GitHubContext, GitHubRestClient } from './models';
 
 const toTagName = (ref: string): string => {
   const customTagName = core.getInput('TAG_NAME');
@@ -11,8 +10,8 @@ const toTagName = (ref: string): string => {
 };
 
 export const createRelease = async (
-  github: RestEndpointMethods,
-  context: Context,
+  github: GitHubRestClient,
+  context: GitHubContext,
   notes: string,
 ) => {
   const {
