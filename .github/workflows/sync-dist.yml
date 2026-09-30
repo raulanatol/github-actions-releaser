@@ -1,0 +1,44 @@
+name: 'sync-dist'
+
+# dist/ is the bundle the runner executes, so main must always carry an up to date
+# copy. Dependabot cannot run the build itself, so its pull requests land with a
+# stale bundle. Instead of blocking those pull requests on a build Dependabot is
+# unable to produce, main regenerates dist/ right after the merge.
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+# Two merges landing close together would race on the same push.
+concurrency:
+  group: sync-dist
+  cancel-in-progress: false
+
+jobs:
+  sync-dist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      # tsup is configured with `clean: true`, so this rebuilds dist/ from scratch.
+      - run: npm run build
+      - name: Commit dist/ if it changed
+        run: |
+          if [[ -z "$(git status --porcelain dist)" ]]; then
+            echo "dist/ is already up to date."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add dist
+          git commit -m 'chore: regenerate dist/'
+          # A push authenticated with GITHUB_TOKEN does not start another workflow
+          # run, so this cannot loop back into itself.
+          git push origin HEAD:refs/heads/main
