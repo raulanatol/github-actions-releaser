@@ -20668,29 +20668,32 @@ var fromPullRequestToIssueToRelease = (pullRequest) => ({
   user: pullRequest.user.login,
   type: classifyIssue(pullRequest)
 });
+var isAfter = (date, since) => Boolean(date) && (!since || Date.parse(date) > Date.parse(since));
 var getClosedIssues = async (github, previousReleaseDate, repo, owner) => {
   const request2 = {
     owner,
     repo,
-    state: "closed"
+    state: "closed",
+    per_page: 100
   };
   if (previousReleaseDate) {
     request2.since = previousReleaseDate;
   }
-  const githubClosedIssues = await github.issues.listForRepo(request2);
-  return githubClosedIssues.data.filter(withUser).map(toIssueToRelease);
+  const issues = await github.paginate(github.rest.issues.listForRepo, request2);
+  return issues.filter((issue2) => !issue2.pull_request).filter((issue2) => isAfter(issue2.closed_at, previousReleaseDate)).filter(withUser).map(toIssueToRelease);
 };
-var getMergedPullRequest = async (github, previousReleaseDate, repo, owner) => {
-  const request2 = {
-    owner,
-    repo,
-    state: "closed"
-  };
-  if (previousReleaseDate) {
-    request2.since = previousReleaseDate;
-  }
-  const githubPullRequestClosed = await github.pulls.list(request2);
-  return githubPullRequestClosed.data.filter(withUser).filter(isMerged).map(fromPullRequestToIssueToRelease);
+var getMergedPullRequests = async (github, previousReleaseDate, repo, owner) => {
+  const pullRequests = await github.paginate(
+    github.rest.pulls.list,
+    { owner, repo, state: "closed", sort: "updated", direction: "desc", per_page: 100 },
+    (response, done) => {
+      if (previousReleaseDate && response.data.some((pullRequest) => !isAfter(pullRequest.updated_at, previousReleaseDate))) {
+        done();
+      }
+      return response.data;
+    }
+  );
+  return pullRequests.filter(isMerged).filter((pullRequest) => isAfter(pullRequest.merged_at, previousReleaseDate)).filter(withUser).map(fromPullRequestToIssueToRelease);
 };
 var getLatestReleaseDate = async (github, repo, owner) => {
   try {
@@ -20733,9 +20736,9 @@ var issuesToReleaseNotes = (issues) => {
   return toReleaseNoteText(releaseNotesIssuesText);
 };
 var releaseNotes = async (github, repo, owner) => {
-  const previousReleaseDate = await getLatestReleaseDate(github, repo, owner);
+  const previousReleaseDate = await getLatestReleaseDate(github.rest, repo, owner);
   const closedIssues = await getClosedIssues(github, previousReleaseDate, repo, owner);
-  const mergedPullRequests = await getMergedPullRequest(github, previousReleaseDate, repo, owner);
+  const mergedPullRequests = await getMergedPullRequests(github, previousReleaseDate, repo, owner);
   return issuesToReleaseNotes([...closedIssues, ...mergedPullRequests]);
 };
 
@@ -24760,7 +24763,7 @@ var getGithubClient = () => {
   if (!githubToken) {
     throw new Error("Invalid GITHUB_TOKEN");
   }
-  return getOctokit(githubToken).rest;
+  return getOctokit(githubToken);
 };
 var initialize = ({ repo, owner }) => ({ github: getGithubClient(), repo, owner });
 var canCreateRelease = () => {
@@ -24775,7 +24778,7 @@ async function run() {
     debug(`Notes: ${notes}`);
     setOutput("notes", notes);
     if (canCreateRelease()) {
-      await createRelease(github, context2, notes);
+      await createRelease(github.rest, context2, notes);
     }
   } catch (error2) {
     setFailed(error2.message);

@@ -2,7 +2,9 @@ import type { context, getOctokit } from '@actions/github';
 
 // Derived from the values `@actions/github` exports instead of deep-importing its
 // internals: those subpaths are not part of the package `exports` map.
-export type GitHubRestClient = ReturnType<typeof getOctokit>['rest'];
+export type GitHubClient = ReturnType<typeof getOctokit>;
+
+export type GitHubRestClient = GitHubClient['rest'];
 
 export type GitHubContext = typeof context;
 

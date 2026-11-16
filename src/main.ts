@@ -8,7 +8,7 @@ const getGithubClient = () => {
   if (!githubToken) {
     throw new Error('Invalid GITHUB_TOKEN');
   }
-  return getOctokit(githubToken).rest;
+  return getOctokit(githubToken);
 };
 
 const initialize = ({ repo, owner }) => ({ github: getGithubClient(), repo, owner });
@@ -26,7 +26,7 @@ async function run(): Promise<void> {
     core.debug(`Notes: ${notes}`);
     core.setOutput('notes', notes);
     if (canCreateRelease()) {
-      await createRelease(github, context, notes);
+      await createRelease(github.rest, context, notes);
     }
   } catch (error: any) {
     core.setFailed(error.message);
