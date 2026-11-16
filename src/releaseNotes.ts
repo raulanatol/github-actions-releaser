@@ -1,7 +1,7 @@
 import {
   GitHubIssue,
   GitHubPullRequest,
-  GitHubRestClient,
+  GitHubClient,
   IssueToRelease,
   ReleaseNotesIssuesText,
 } from './models';
@@ -51,46 +51,63 @@ const fromPullRequestToIssueToRelease = (pullRequest: GitHubPullRequest): IssueT
   type: classifyIssue(pullRequest),
 });
 
-const getClosedIssues = async (
-  github: any,
+const isAfter = (date: string | null | undefined, since: string | null): boolean =>
+  Boolean(date) && (!since || Date.parse(date!) > Date.parse(since));
+
+// `issues.listForRepo` also returns pull requests (every pull request is an issue
+// for the API), and its `since` filters by `updated_at`, not `closed_at`.
+export const getClosedIssues = async (
+  github: GitHubClient,
   previousReleaseDate: string | null,
   repo: string,
   owner: string,
 ): Promise<IssueToRelease[]> => {
-  const request: any = {
+  const request: Parameters<GitHubClient['rest']['issues']['listForRepo']>[0] = {
     owner,
     repo,
     state: 'closed',
+    per_page: 100,
   };
 
   if (previousReleaseDate) {
     request.since = previousReleaseDate;
   }
 
-  const githubClosedIssues = await github.issues.listForRepo(request);
-  return githubClosedIssues.data.filter(withUser).map(toIssueToRelease);
+  const issues = await github.paginate(github.rest.issues.listForRepo, request);
+  return issues
+    .filter((issue) => !issue.pull_request)
+    .filter((issue) => isAfter(issue.closed_at, previousReleaseDate))
+    .filter(withUser)
+    .map(toIssueToRelease);
 };
 
-const getMergedPullRequest = async (
-  github: any,
+// `pulls.list` has no `since` parameter. Pull requests are read newest-updated
+// first and paging stops once one was last updated before the previous release:
+// a pull request merged after it must have been updated after it too.
+export const getMergedPullRequests = async (
+  github: GitHubClient,
   previousReleaseDate: string | null,
   repo: string,
   owner: string,
 ): Promise<IssueToRelease[]> => {
-  const request: any = {
-    owner,
-    repo,
-    state: 'closed',
-  };
+  const pullRequests = await github.paginate(
+    github.rest.pulls.list,
+    { owner, repo, state: 'closed', sort: 'updated', direction: 'desc', per_page: 100 },
+    (response, done) => {
+      if (
+        previousReleaseDate &&
+        response.data.some((pullRequest) => !isAfter(pullRequest.updated_at, previousReleaseDate))
+      ) {
+        done();
+      }
+      return response.data;
+    },
+  );
 
-  if (previousReleaseDate) {
-    request.since = previousReleaseDate;
-  }
-
-  const githubPullRequestClosed = await github.pulls.list(request);
-  return githubPullRequestClosed.data
-    .filter(withUser)
+  return pullRequests
     .filter(isMerged)
+    .filter((pullRequest) => isAfter(pullRequest.merged_at, previousReleaseDate))
+    .filter(withUser)
     .map(fromPullRequestToIssueToRelease);
 };
 
@@ -146,12 +163,12 @@ export const issuesToReleaseNotes = (issues: IssueToRelease[]): string => {
 };
 
 export const releaseNotes = async (
-  github: GitHubRestClient,
+  github: GitHubClient,
   repo: string,
   owner: string,
 ): Promise<string> => {
-  const previousReleaseDate = await getLatestReleaseDate(github, repo, owner);
+  const previousReleaseDate = await getLatestReleaseDate(github.rest, repo, owner);
   const closedIssues = await getClosedIssues(github, previousReleaseDate, repo, owner);
-  const mergedPullRequests = await getMergedPullRequest(github, previousReleaseDate, repo, owner);
+  const mergedPullRequests = await getMergedPullRequests(github, previousReleaseDate, repo, owner);
   return issuesToReleaseNotes([...closedIssues, ...mergedPullRequests]);
 };
