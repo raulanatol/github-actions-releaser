@@ -2,7 +2,9 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      # Only full versions. The moving major tag (v4, v5...) is re-pointed on every
+      # release and must not create a release of its own.
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 permissions:
   contents: write
   pull-requests: read

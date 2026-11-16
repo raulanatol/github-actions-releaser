@@ -35,6 +35,16 @@ function publish() {
   git push && git push --follow-tags
 }
 
+# Users pin `@vN`, so the major tag has to follow every release. It is moved
+# after the release tag is pushed so it never points at an unpublished version.
+function move_major_tag() {
+  local version major
+  version="v$(node -p "require('./package.json').version")"
+  major="${version%%.*}"
+  git tag -fa "${major}" -m "${major} -> ${version}" "${version}^{commit}"
+  git push -f origin "refs/tags/${major}"
+}
+
 verify_uncommitted_changes "There are uncommitted changes in the working tree."
 verify_main_branch
 # The bundle in dist/ is what the runner executes, so it has to be committed
@@ -43,4 +53,5 @@ make
 verify_uncommitted_changes "The build modified tracked files. Commit dist/ before releasing."
 change_version
 publish
+move_major_tag
 echo "📦✅"
