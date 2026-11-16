@@ -39,17 +39,18 @@
   },
   "devDependencies": {
     "@types/node": "26.2.0",
-    "eslint": "10.8.1",
+    "eslint": "10.15.0",
     "eslint-config-prettier": "10.1.8",
     "prettier": "3.9.6",
     "shx": "0.4.0",
     "tsup": "8.5.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.67.0",
+    "typescript-eslint": "8.72.2",
     "vitest": "4.1.12"
   },
   "overrides": {
-    "rollup": "4.62.4"
+    "rollup": "4.62.4",
+    "minimatch": "11.0.8"
   },
   "engines": {
     "node": ">=24",
