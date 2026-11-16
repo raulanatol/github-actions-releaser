@@ -38,8 +38,9 @@ release_major: check
 release: check
 	@.scripts/finish-release patch
 
+# Install first: `clean` runs shx, which only exists once node_modules is in place.
 --pre_check:
-	@npm run clean
 	@npm install
+	@npm run clean
 	@npm run lint
 	@npm run type-check
