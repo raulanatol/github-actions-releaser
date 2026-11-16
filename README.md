@@ -53,7 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Generate release notes
-        uses: raulanatol/github-actions-releaser@v3.0.0
+        uses: raulanatol/github-actions-releaser@v4.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -64,7 +64,7 @@ Replace the `Generate release notes` step of the previous example with:
 
 ```yaml
 - name: Generate release notes
-  uses: raulanatol/github-actions-releaser@v3.0.0
+  uses: raulanatol/github-actions-releaser@v4.0.0
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   with:
@@ -76,7 +76,7 @@ Replace the `Generate release notes` step of the previous example with:
 ```yaml
 - name: Generate release notes
   id: notes
-  uses: raulanatol/github-actions-releaser@v3.0.0
+  uses: raulanatol/github-actions-releaser@v4.0.0
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   with:
